@@ -1,0 +1,183 @@
+Signup
+    Frontend
+        View : Signup.html
+            Onform Submit
+                Call method Register_user() in Signup_ctrl 
+                    Check for empty fields
+                    If true : 
+                        Show error message
+                    if false :
+                        Compare , password and confirm password
+                        if true : 
+                            Call custom service Register_user(data) 
+                                Api call to authentiication controller's , method named Register_user() and pass the data
+                                    Register_user() //backend
+                                        Load data from the Frontend
+                                        check email by calling check_email(email) method of auth modal // that it is unique
+                                        if false :
+                                            output that it is not a unique email
+                                        if true :
+                                            call to register_user(email,password,name) method of auth modal
+                                                insert query to add the new user in database
+                                                return last_insert_id 
+                                            Call to check_session(last_insert_id) method of the auth_controller and set userdetails in the session
+                            redirect to tickets page // register_user Frontend controller of Frontend will do this using state.go
+                        if false :
+                            show error message
+=======================================================================================                
+Signup AND Login
+
+check_email(email): // auth modal method
+    select query which counts the number of rows
+    if number of rows is 0
+        return true
+    else
+        return false
+
+get_user_details(id,email)://auth_modal
+    if (id)
+        return user details from the database by id
+    if (email)
+        return user details from the database by email 
+        
+
+
+
+check_session(user_id) //backend controller
+    get user details(id) //  auth_modal method
+========================================================================================
+Login 
+    Frontend
+        View : login.html
+        valid email format
+            Onform Submit
+                Call method authenticate_user() in login_ctrl //frontend
+                    Check for empty fields
+                        If true : 
+                            Show error message
+                        if false : 
+                            Api call auth_controller login_method(data) and pass data  
+                                check_email($email) method of the auth_controller // if it exists
+                                if true
+                                    check_cred(email,password) // check the credentials entered by the user in auth modal
+                                        return id of user if password is matched
+                                    check_session(user_id)
+                                    if rememberme = true    
+                                        call to hook Set_user_cookie
+                                            custom_token_genrator_helper()
+                                            set cookie in browser
+                                            insert into user_tokens
+                                    go to login_ctrl
+                                if false
+                                    show error
+                    go to tickets page //state.go(tickets)
+
+=========================================================================================
+
+Login -> Forgot Password
+    Frontend
+        view : forgot_password.html
+        forgot_password ctrl
+            valid email format
+            get_captcha //genrate captcha in frontend
+            Onform Submit   
+                validate_function()
+                    check captcha entered by the user
+                    if true:
+                        api call to check_details method in auth_controller
+                            check_details(email)
+                                check_email(email) // exists in the database
+                                if true:
+                                    get_user_details(NULL,email)
+                                    get user_id,email from details 
+                                    set global variables user_id,email
+                                    return email and user_id 
+                                    call hook send_mail_with_otp(u_id,email)
+                                        //inside hook
+                                            otp = get_otp(u_id)
+                                            if(!otp){
+                                                otp = Custom_otp_genrator()
+                                                store_otp(u_id,otp) method in auth_modal
+                                                    insert into otp table with user_id
+                                                custom_send_mail_helper(mail,otp)
+                                                    send mail to user with otp
+
+                                            }
+                                            else{
+                                                call to update_otp(u_id) method in auth modal // update the genration_time to  current_time 
+                                                custom_send_mail_helper(mail,otp)
+                                                    send mail to user with otp
+                                                   
+                                            }
+                                if false:
+                                    return not valid email
+                        set rootScope for user_id and email
+                        Go to OTP page //state.go(otp_view) 
+                    if false:
+                        show captcha error
+
+=========================================================================================
+
+forgot_password -> otp_view
+    frontend
+        view:otp_view.html
+            otp_required
+            On submit //inside otp controller
+                submit_otp() //fucntion in otp controller
+                validate_otp(data)//call to service function with uid and otp
+                    call to controller check_otp(u_id,otp)
+                        call to get_otp(u_id) method in auth modal 
+                            get otp in the database by the user id
+                            return otp details (otp_id,otp,genration_time)
+                        check if the otp entered by the user and otp in database matches and current_time < (genration_time + 30 minutes)
+
+                        if true:
+                            call to delete_otp(u_id) method in auth modal 
+                            return true and go back to frontend controller
+
+                    show reset password page // $state.go('reset_password')
+
+                        else if current_time > (genration_time + 30 minutes):
+                            return otp error (not a valid otp regnerate the otp to continue resetting your password)
+            On resend otp 
+                resend_otp(data)//call to service function with uid and otp
+                    call to controller resend_otp(u_id)
+                        return true
+                        call hook send_mail_with_otp(u_id,email) // line 89-105
+
+===========================================================================================================================================
+
+otp_view -> reset_password
+    view:reset_password.html
+        validation feildsa are not empty
+        both should be same
+        OnSubmit 
+            both should be same validation
+            if true
+                reset_password ctrl
+                    call to service function reset_password(password)
+                        call to controller reset_password(password)
+                            call to modal method update_password(password,u_id) in auth_modal
+                                update query to update password in database
+
+                Go to login page // $state.go(login)
+
+            if false
+                return both should be same error
+
+
+
+
+
+
+                        
+                        
+
+
+
+
+
+
+
+
+

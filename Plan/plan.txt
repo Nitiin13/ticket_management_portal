@@ -1,0 +1,140 @@
+View Tickets(customers)
+    after login button  click
+    rest api for the controller
+        using angular call on button click
+    controller to get the tickets data
+        In the model name tickets function name get_tickets()
+
+            Check the global role variable set for the user after login
+
+            if customer
+                single select query for the tickets retrieval based on user id 
+            if admin
+                single select query for the tickets retrieval 
+            
+        load the tickets data in table form
+            using angular ng-repeat 
+
+    Show filter options 
+        angular controller to ask the CI controller what is the role of the user
+        if admin
+            show admin options for filtering the tickets
+        if customer
+            show customer options for filtering the tickets
+    
+    Filter the tickets(customers)
+        Based on sortby (onhold,tobereviewed etc) 
+
+            using angular call sort_filter(value) on rest api for the controller
+                which calls a model 
+                    Select the tickets based on status provided by the controller
+                return the results to the angular controller    
+        Clear the filter
+            using angular controller
+                to call the controller to load the view which calls view all the tickets method 
+    
+    Filter the tickets(admin)
+
+        Show filter modal
+            Apply the filter /////////Doubt many filter how t run the query
+            
+                using angular call the controller send the data as formdata which call the controller in CI
+                    Look at the form data and decide which fields to 
+                    Select query based on filters applied
+                    show the view tickets page with filters applied
+                    show how many filters are applied
+            Discard the filter
+                using angular to clear the scopes
+        
+
+    Based on search //// Doubt single search bar for keyword and ticket id both
+
+        search for the tickets using keywords
+            using angular call search_filter(value) on rest api for the controller
+            which calls a model 
+                Select the tickets based on keyword provided by the controller using like query
+        search for the tickets using id
+            using angular call sort_filter(value) on rest api for the controller
+            which calls a model 
+                Select the tickets based on ticked id provided by the controller
+    
+    Download the tickets 
+        using angular to call the controller to call the CI controller which sets the header and content type and downloads the file on the user side
+        
+    
+    Add new tickets
+        load the add tickets page 
+            using angular ui-sref
+
+View Tickets -> Add new Tickets
+
+    Fetch contact name and email 
+        using angular state parameter to pass onto the data from view tickets page 
+        Making them disabled 
+            using angular
+        
+    Check attachment Size 
+        using angular to check if the size is less than 40mb
+
+    Insert the ticket in the database on button click
+
+        using angular api call to a controller
+        using CI controller 
+            Check the attachment size 
+                if less than 40 mb
+                    to call a model add_new_ticket()
+                        single Insert query to add the tickets into the database
+                else 
+                    return Size error 
+    
+        
+View Ticket(customer) -> delete selected tickets
+
+    Show confirmation modal to the user
+        using angular 
+        If confirmation is given by the user
+            using angular to call api and send ticket id to the CI controller    
+                to call a model delete_tickets()   
+                    update query set coloumn is deleted (soft deletes)
+        Load the view ticket page
+            
+
+View Tickets(admin)
+
+    rest api for the controller
+        using angular call on button click
+    controller to get the tickets data
+        In the model name tickets function name get_admin_tickets()
+            single select query for the tickets retrieval
+        load the tickets data in table form
+            using angular ng-repeat 
+
+    
+    
+
+
+        Based on status (sort) (onhold,tobereviewed etc) 
+            using angular filter 
+        
+        Based on search
+            search for the tickets using keywords
+                using angular filter
+                show acknowledgement of the search 
+                    using angular
+            search for the tickets using id
+                using angular filter 
+                show acknowledgement of the search 
+                    using angular
+    
+        Clear the filter
+            set all scopes to empty/default
+    
+    Download the tickets
+        using angular controller
+
+
+
+View Ticket -> Edit ticket
+
+
+

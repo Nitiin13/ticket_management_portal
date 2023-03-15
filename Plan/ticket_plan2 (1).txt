@@ -1,0 +1,197 @@
+Login-->TicketView
+	Frontend:
+		Ticket.html
+		role restriction
+		-add a nw ticket//user
+		-download table
+		-logout
+		-statusfilter //admin & user 
+		-filters //admin
+			-filtermodal
+			-chips clearfilters
+		-sortby
+		-searchbar
+		-status dropdown //user
+			 onchange()
+			 	call to commonfiltermethod of backend in which single object we will use for filters search etc .
+		-searchtextack clearsearch
+		ticket table
+		status role restriction
+			if user static 
+			if admin dropdown
+				-onchange call to updateticket($ticketid)
+		checkbox to select ticket
+		if checked 
+			appear update and delete
+			update disabled for multiple selects
+			delete enabled for multiple selects
+		get_userinfo from globals set after login
+		resolve tickets list as per role 
+		user->getTickets(user_id) ? list of tickets : msg and button  
+		admin->getTickets() ? list of tickets: no tickets yet
+		add a new ticket->another page
+		logout-> logout_function both frontend & backend
+		//Single object will be used to manage filters , status and search
+		filters: //admin only
+			call to api fetch_details() // to populate the filter
+			show modal
+				add the filters to the object created 
+				call to controller in backend
+					send the data object to the filter(data) modal
+						if else ladder to manipulate the where conditions
+		status://open tickets - on hold , to be reviewed , In progress 
+			   //closed tickets - resolved , resolved and closed 
+			   manipulqate the object in our filter controller in the frontend
+			   backend samew as above line 30
+		search :
+				same as above 
+		clear filters:clear all filters and get tickets
+		delete_ticket->delete ticket section
+		download tickets->
+				pass filters,search,sortby details in a object 
+				call to backend filters(data) usermodal method will return a table 
+				download csv.
+
+=============================================================================================================================
+User/Client LoggedIn
+TicketDashboard->Add new ticket
+	  View : add_new_ticket.html
+	  		 set ContactName[User's Name,Email] from globals
+         required fields for subject and description!
+            Onform Submit 
+				Call method add_ticket() in ticket_ctrl //frontend
+                        take ticket details
+                        check if attachment exists
+                        	true: check size < 40mb ? continue flow : size error.
+                        call to Api method UserController's Add_Ticket(ticketdetails)
+                        	Add_Ticket loads data from frontend and user_id from session 
+	                        	check attachment exists
+	                        			if exists 
+	                        				check size<40mb
+	                        			 	if valid 
+	                        			 		Call to addticket(ticketdetails,uid) function of userModel
+	                        					returns last_inserted_id 
+	                        			 		call to addattachment(last_inserted_Id,type,attachment) usermodel
+	                        			 			inserts attachment returns true 
+	                        			 			if inserted 
+	                        			 			show snackbar inserted.
+	                        			 	not valid false error at frontend 
+	                        			 else  
+	                        			 		Call to addticket(ticketdetails,uid) function of userModel
+	                        			 		show snackbar inserted at frontend
+=============================================================================================================================
+View Ticket(customer/admin) -> delete selected tickets
+	action at delete button 
+    Show confirmation modal to the user
+        using angular 
+        If confirmation is given by the user
+            using angular to call api and send ticket id to the CI controller    
+                to call a Usermodel delete_tickets(data)   
+                    update query set coloumn is deleted (soft deletes)
+        Load the view ticket page	 
+ ============================================================================================================================ 
+ View Ticket(customer/admin)-> logout
+ 	 	On logoutbutton 
+ 	 		logout method of lgtcrt //frontend
+ 	 		frontend pe rootscope null and api call to  backend to end the session.                    	
+=============================================================================================================================
+Clicking on a specific ticket on dashboard view
+View_specific_Ticket(user)
+	View:single_ticket.html
+	getTicket(ticketid)
+	getattachments(ticketid,type=0)
+	getreplies(ticketid)
+	getattachments(ticketid,type=1)
+	fetch ticket details from backend to frontend
+	make replyclick enable as per currentUserid and replyid
+	at frontend check lastUpdatestatus == generation time && no replies to the ticket
+		if true:
+				is_editable=true;
+				delete ticket enable
+		if false:
+				delete ticket disable
+=============================================================================================================================
+View_specific_ticket(user)->edit
+	view:edit_ticket.html
+	getTicket(ticketid)
+	getattachments(ticketid,type=0)
+	get_replies(ticketid)
+		check replies exists or not
+			if true:
+			 all disabled for user
+				is_editable=false	
+				if admin 
+				 is_editable=true
+			if false:
+			let user edit subject description attachment account number
+			is_editable=true
+		ticketarray
+				Onsubmit 
+				updateticket()//frontend
+				if iseditable 
+				true 
+				compare old ticket array and new_array
+				foreach value:
+					compare old vs new
+						updatearray=append updated values as key value pair.			
+						sendupdatearray to backend updateticket(updatearry,ticketid)
+						updateticket(updateArray,ticketid) Usermodel
+				false:
+					compare ticektarray_account_number vs new_accountnumber
+					if changed 
+						updatearray=+newaccno
+						sendupdatearray to backend updateticket(updatearry,ticketid)
+						updateticket(updateArray,ticketid) Usermodel
+					else 
+						no changes//
+=============================================================================================================================
+View_specific_ticket(admin)->edit fields jyada honge baki same logic because same table pe chal raha he.
+=============================================================================================================================
+View_specific_ticket(user)->reply
+	View:add_reply_ticket.html
+	checks for empty
+	getTicket(ticketid)
+	fetch ticket details from backend to frontend 
+	check attachment
+		if exists
+			check size<40mb : continue flow ? size error
+		onsubmit add_reply(details,ticketid) call to backend api
+		add_reply()backend controller take data from frontend
+		 check attachment exist
+		 	check size 
+		 		if valid
+					add_reply(details,ticketid,uid) returns last_inserted_id //UserModel
+					add_attachment_to_reply(type=1,last_inserted,attachments) //UserModel
+				not valid 
+					error to front end
+		no attachment exist
+			add_reply(details,ticketid,uid) //usermodel
+=============================================================================================================================
+View_specific_ticket(user)->select_specific_reply->edit_reply
+	resolve reply details and attachments etails from backend
+	View:edit_reply.html
+		populate details in body and attachments
+			on form submit()
+				call to frontend controller functions
+					check if reply or attachments changed
+					if changed only then pass them the parameters or else pass null
+					call to service function update_reply(reply,attachment)
+						update reply // method of ticket modal
+						update attachments // method of ticket modal and is commonly shared b/w edit reply and edit_ticket
+		redirect user back to view_specific_ticket page // load the tickets again and show updated information
+					
+
+=============================================================================================================================
+edit_attachment(attachment,type,refid)->
+	get attachments associated with refid and type(0 for ticket , 1 for reply)
+		get the names of the attachments in db and attachments recieved from frontend controller 
+			compare the attachments from backend and frontend
+				if (all are same)  // in the database 
+					do nothing
+				else if (all are different) 
+					update the is_deleted coloumn in backend of previous attachments and insert new attachments
+				else if (some same , some different) 
+					insert different , update which are no longer need to is_deleted
+				
+				
+				

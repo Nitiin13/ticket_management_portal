@@ -44,5 +44,45 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
         
     //     return request;
     // }
+    serviceApi.checkLogin=function(data){
+        var request =$http({
+            method:'POST',
+            url:baseUrl+'auth/login',
+            headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+            data:data
+        });
+       
+        return request;
+    }
+    serviceApi.logout=function(){
+        var  logoutrequest=$http({
+            method: 'POST',
+            url: baseUrl+'auth/logout',
+           
+        });
+        return logoutrequest;           
+    }
+    serviceApi.getTickets=function(data){
+        
+        var ticketrequest=$http({
+            method:'POST',
+            url: baseUrl+'user/getTickets',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data:data
+        });
+        return ticketrequest;
+
+    }
+    serviceApi.update_status=function(data)
+    {
+        var status=$http({
+            method:'POST',
+            url:baseUrl+'user/update_ticket_status',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data:data
+
+        });
+        return status;
+    }
     return serviceApi;}
     );

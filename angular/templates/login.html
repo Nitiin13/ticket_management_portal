@@ -1,3 +1,48 @@
-<div ng-controller="loginController">
-<h1>hello</h1>
-</div>
+<div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone mdl-col--8-col-tablet" >
+            <div id="login-div">
+            <div id="lgn-header">Login</div>
+            <form name="lgnForm" >
+                <div class="inpt-section">
+                  <span style="color:red" ng-if="present">Email and password did not match.</span>
+                  <span style="color:red" ng-if="req_error">Both fields are required.</span>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="lgn-textfield">
+                  <input class="mdl-textfield__input" type="email" id="email" name="email" ng-model='email'>
+                <label class="mdl-textfield__label" for="email">Email</label>
+                <span class="mdl-textfield__error" ng-if="lgnForm.email.$dirty && lgnForm.email.$invalid">Email Format invalid</span>
+                </div>
+                
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  id="lgn-textfield">
+                    <input class="mdl-textfield__input" type="password" name="pass" id="pass" ng-model='pass'>
+                    <label class="mdl-textfield__label" for="pass">Password</label>
+                    <div class="inpt-icon" >
+                    <label class="mdl-button mdl-js-button mdl-button--icon" for="sample3"  >
+                        <span id="icon" class="material-icons" ng-click="viewDetails()">
+                            visibility
+                            </span>
+                    </div>
+                </div>
+                  </div>
+                  
+                  <div class="chk-section">
+                 <div class="chkpart">
+
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox1">
+                    <input type="checkbox" id="checkbox1" class="mdl-checkbox__input" ng-model="rememberme" >
+                    <span class="mdl-checkbox__label" id="rm-span">Remember Me</span>
+                  </label>
+                </div>
+                    <div clas="fp-section">
+                  <span><a id="fm-span"ui-sref="#">Forget Password?</a></span>
+                  </div>
+                </div>                 
+                
+                  <button class="mdl-button mdl-js-button mdl-button--raised" ng-click="authenticateUser()" id="btn-primary">
+                    Login
+                  </button>
+               
+              </form>
+              <div class="extra">Don't have an account? <a ui-sref="Signup">Sign up</a></div>
+          </div>
+    </div>
+  </div>
