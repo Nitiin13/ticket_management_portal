@@ -1,0 +1,332 @@
+
+
+.signup{
+   
+    margin:10vh auto auto auto ;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 20px;
+    gap: 32px;
+    width: 328px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+}
+
+/*Sign up main content*/
+.signup_view{
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    gap: 20px;
+}
+.signup_view>b{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;   
+    font-size: 20px;
+
+}
+.signup_view>input{
+    width: 100%;
+    height: 56px;
+}
+.mdl-textfield__label__icon {
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    opacity: 1;
+ }
+ .mdl-textfield{
+    width: 100%;
+}
+
+
+ /*Sign up Footer start*/
+.signup_footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    /* gap: 20px; */
+    margin-top: 29px;
+    margin-right: 30px; 
+}
+.signup_footer>button{
+    width: 125px;
+    height: 40px;
+
+}
+.signup_footer>button[id="register"]{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;   
+    background-color: #4275F4;
+    border-radius: 3px;
+    color: #FFFFFF;
+}
+
+.signup_footer>button[id="discard"]{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;   
+    border: 1px solid #9b9b9b;
+    border-radius: 3px;
+    background-color: #FFFFFF;
+    color: #9B9B9B;
+}
+.signup_footer_below{
+    margin-top: 20px;
+    margin-right: 15px;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;   
+    font-size: 14px;
+}
+.signup_footer_below>a{
+    font-family: inherit;
+    color: #4275F4;
+}
+
+
+@media only screen and (max-width: 391px){
+  
+    .signup{
+        margin-top: 110px;
+        width: 350px;
+        text-align: left;
+        box-sizing: border-box;
+    }
+    .signup_footer{
+        gap: 42px;
+        justify-content: center
+    }
+    #su{
+        align-self: flex-start;
+        
+    }   
+    .mdl-textfield{
+        width: 100%;
+    }
+    .signup_footer_below{
+        margin-left: 20vw;
+        
+    }
+}
+/* SIGNUP PAGE CSS END*/
+/*=================================================================================================================*/
+/*FORGOT PASSWORD PAGE START*/
+.captcha{
+    border: 1px solid #0000001f;
+    background: #F9F9F9 0% 0% no-repeat padding-box;
+    border: 1px solid #0000001F;
+    border-radius: 6px;
+    opacity: 1;
+    width: 100%;
+    height: 83px;
+}
+.captcha_content{
+    margin: auto;
+    margin-top: 35px;
+}
+ /*Captcha Footer start*/
+
+.captcha_footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    /* gap: 20px; */
+    margin-top: 29px;
+    margin-right: 30px; 
+}
+.captcha_footer>button{
+    width: 125px;
+    height: 40px;
+
+}
+.captcha_footer>button[id="register"]{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;   
+    background-color: #4275F4;
+    border-radius: 3px;
+    color: #FFFFFF;
+}
+
+.captcha_footer>button[id="discard"]{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;   
+    border: 1px solid #9b9b9b;
+    border-radius: 3px;
+    background-color: #FFFFFF;
+    color: #9B9B9B;
+}
+.captcha_footer_below{
+    margin-top: 20px;
+    margin-right: 15px;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;   
+    font-size: 14px;
+}
+.captcha_footer_below>a{
+    font-family: inherit;
+    color: #4275F4;
+}
+
+
+@media only screen and (max-width: 391px){
+  
+    .signup{
+        margin-top: 110px;
+        width: 350px;
+        text-align: left;
+        box-sizing: border-box;
+    }
+    .captcha_footer{
+        gap: 24px;
+        justify-content: center
+    }
+    #su{
+        align-self: flex-start;
+        
+    }   
+    .mdl-textfield{
+        width: 100%;
+    }
+    .captcha_footer_below{
+        margin-left: 20vw;
+    }
+}
+
+/* =================================================================*/
+/*OTP Page CSS*/
+.otp{
+   
+    margin:15vh auto auto auto ;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 20px;
+    gap: 32px;
+    width: 398px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+}
+#otp_mail{
+    font: normal normal bold 20px/31px Open Sans;
+    
+}
+
+.otp_view{
+
+    display: flex;
+    flex-direction: column;
+    width: 328px;
+    margin: auto;
+    text-align: center;
+    gap: 20px;
+}
+.otp_view>b{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;   
+    font-size: 20px;
+
+}
+.otp_view>input{
+    width: 100%;
+    height: 56px;
+}
+.mdl-textfield__label__icon {
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    opacity: 0.5;
+ }
+ .mdl-textfield{
+    width: 100%;
+}
+
+
+
+.otp_footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 42px;
+    /* margin-right: 30px;  */
+}
+.otp_footer>button{
+    width: 125px;
+    height: 40px;
+
+}
+.otp_footer>button[id="submit"]{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;   
+    background-color: #4275F4;
+    border-radius: 3px;
+    color: #FFFFFF;
+}
+
+.otp_footer>button[id="resend"]{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;   
+    border: 1px solid #9b9b9b;
+    border-radius: 3px;
+    background-color: #FFFFFF;
+    color: #9B9B9B;
+}
+.otp_footer_below{
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    margin-top: 42px;
+    margin-right: 15px;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;   
+    font-size: 14px;
+}
+.otp_footer_below>div>a{
+    font-family: inherit;
+    text-decoration: none;
+    color: #4275F4;
+}
+
+
+@media only screen and (max-width: 391px){
+  
+    .otp{
+        margin-top: 110px;
+        width: 350px;
+        text-align: left;
+        box-sizing: border-box;
+    }
+    .otp_footer{
+        gap: 42px;
+        justify-content: center
+    }
+    #su{
+        align-self: flex-start;
+        
+    }   
+    .mdl-textfield{
+        width: 100%;
+    }
+    .otp_footer_below{
+        margin-left: 20vw;
+        
+    }
+}
+
+/*=======================================================*/
+
+.otp_footer>button[id="resetpassword"]{
+    font: normal normal normal 16px/24px Open Sans;
+    background-color: #4275F4;
+    border-radius: 3px;
+    color: #FFFFFF;
+    width: 322px;
+}
+
+#minimum{
+    text-align: left;
+    font: normal normal normal 12px/24px Open Sans;
+    letter-spacing: 0px;
+    color: #9B9B9B;
+    opacity: 1;
+}
+
+#error_message{
+    font: normal normal normal 12px/16px Roboto;
+    letter-spacing: 0.4px;
+    color: #B00020;
+    opacity: 1
+}
+#demo-toast-example{
+    background-color: #4275F4;
+    font: normal normal normal 16px/24px Open Sans;
+}

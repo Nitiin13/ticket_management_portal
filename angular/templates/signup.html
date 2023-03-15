@@ -1,0 +1,58 @@
+
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone mdl-cell--8-col-tablet">
+    <div class="signup"> 
+      <div id="su"><b>Sign Up</b></div>
+      <span ng-if="match_error" id="error_message">Both Password Must be Same!</span>
+      <span ng-if="email_error" id="error_message">Email Already Exists!</span>
+      <form>
+      <div class="signup_view">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" pattern="[A-Z,a-z, ]*" id="name" ng-model="name" ng-required="name">
+              <label class="mdl-textfield__label" for="name">Name</label>
+              <span class="mdl-textfield__error">Enter a valid Name!</span>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="email" id="email" ng-model="email" ng-required="email" ng-focus="email_error=false">
+              <label class="mdl-textfield__label" for="email">Email</label>
+              <span class="mdl-textfield__error">Enter a Valid Email!</span>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="password" pattern="[a-z,A-Z,0-9]{8,25}" id="pass" ng-model="password" ng-required="password" ng-focus="match_error=false">
+              <label class="mdl-textfield__label" for="pass">Password</label>
+              <span class="mdl-button mdl-js-button mdl-button--icon mdl-textfield__label__icon"><i class="material-icons" ng-click="show_password()" id="password_icon">visibility_off</i></span>
+              <span class="mdl-textfield__error">Password should be minimum 8 charchters</span>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" ng-class="{'is-invalid':password!=re_password}">
+              <input class="mdl-textfield__input" type="password" id="pass_conf" ng-model="re_password" ng-required="re_password">
+              <label class="mdl-textfield__label" for="pass_conf">Confirm Password</label>
+              <!-- <span class="mdl-textfield__error">Input is not a valid charchter!</span> -->
+              <span  ng-if="password!=re_password"class="mdl-textfield__error">Password Does Not Match</span>
+              <span class="mdl-button mdl-js-button mdl-button--icon mdl-textfield__label__icon"><i class="material-icons" ng-click="show_conf_password()" id="password_icon">visibility_off</i></span>
+            </div>
+      </div>
+      <div class="signup_footer">
+          <!-- Raised button with ripple -->
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="register" ng-click="submitUserDetails()">
+              Sign Up
+          </button>
+          <!-- Raised button with ripple -->
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="discard" type="reset">
+              Reset
+          </button>
+              
+      </div>
+      <div class="signup_footer_below">
+          Already a member? <a ui-sref="login">Login</a>
+      </div>
+    </form>
+    
+  </div>
+  </div>
+
+</div>
+
+
+
+    </body>
+</html>

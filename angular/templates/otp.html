@@ -1,0 +1,52 @@
+
+<div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone mdl-cell--8-col-tablet">
+      <div class="otp"> 
+        <div id="otp_mail"><b>Enter the 6-digit code we mailed you on your email {{display_email}}</b></div>
+        <span ng-if="show_error" id="error_message">OTP entered by You is either expired or wrong! Please try again</span>
+        <form>
+        <div class="otp_view">
+          
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="e_otp">
+                <input class="mdl-textfield__input" type="text" pattern="[0-9]{6}" id="otp" ng-model="otp" ng-required="otp" ng-focus="show_error=false">
+                <label class="mdl-textfield__label" for="otp">Enter 6-digit Code</label>
+                <span class="mdl-textfield__error">
+                    <span ng-if="!show_error">Input is not a valid code!</span>
+                    <span ng-if="show_error">OTP entered is either expired or wrong!</span>
+                </span>
+                <!-- <span class="mdl-textfield__error" ></span> -->
+              </div>
+        </div>
+        <div class="otp_footer">
+            <!-- Raised button with ripple -->
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="submit" ng-click="submitotp()">
+                Submit
+            </button>
+            <!-- Raised button with ripple -->
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="resend" ng-click="resend()">
+                Resend Mail
+            </button>
+                
+        </div>
+        <div class="otp_footer_below">
+            <div>
+                <a ui-sref="SignUp">Back to login page</a>
+            </div>
+            <div>
+                Don't have an account? <a ui-sref="SignUp">Sign up</a>
+            </div>
+        </div>
+      </form>
+      <div id="demo-toast-example" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+      </div>
+    </div>
+    </div>
+  
+  </div>
+  
+  
+  
+      </body>
+  </html>
