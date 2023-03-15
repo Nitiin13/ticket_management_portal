@@ -10,7 +10,7 @@
 #login-div{
     /* margin-top:130px;
     margin-left:466px; */
-    margin :120px auto auto auto;
+    margin :69px auto auto auto;
     display: flex;
     flex-direction: column;
     align-items:center;
@@ -102,7 +102,9 @@ opacity: 1;
 }
 @media only screen and (max-width: 391px){
     
+    
     #login-div{
+margin:120px auto auto auto;
         width: 350px;
         box-sizing: border-box;
     }

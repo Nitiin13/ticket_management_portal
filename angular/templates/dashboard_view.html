@@ -83,19 +83,45 @@
             </div>
            
           </div>
+          <div ng-if="!admin"class="drop_down_status">
           <select  class="mdl-textfield__input">
             <!-- ng-options="item as item.name for item in items" -->
-
+            <option>Select status</option>
             <option ng-repeat='item in items' value="{{item.id}}">{{item.name}}</option>
           </select>
-         
+        </div>
     </div>
     </div>
     <div class="mdl-cell mdl-cell--12-col" >
+      <div class="ticket_actions" ng-if="delupdate">
+        <td class="count_info"><span class="ticket_count">{{chklength}} selected</span></td>
+        <div class="extra_actions">
+          <div ng-if="!Sglchk"class="update_section">
+            
+            <button id="lang-switcher" class="mdl-button mdl-js-button mdl-button--icon">
+              <i id="update_icon" class="material-icons">update</i> 
+              
+            </button> 
+          <span class="update_text">Update</span></div>
+          <div ng-if="Sglchk" class="update_section_disabled"><i id="update_icon" class="material-icons">update</i>  
+            <span class="update_text">Update</span></div>
+          <div class="delete_section">
+            <button id="lang-switcher" class="mdl-button mdl-js-button mdl-button--icon">
+              <i id="delete_icon" class="material-icons">delete</i>  
+              
+            </button> 
+        
+          <span class="delete_text">Delete</span></div>
+        </div>
+        </div>
       <div class="ttable">
-      <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+    
+      <table  class="mdl-data-table mdl-js-data-table mdl-data-table mdl-shadow--2dp">
         <thead>
+         
           <tr>
+            <th><label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-1">
+              <input type="checkbox" id="checkbox-1" class="mdl-checkbox__input" ng-model="checkbox" ></th>
             <th>Ticket ID</th>
             <th class="mdl-data-table__cell--non-numeric">Subject</th>
             <th>Contact Name</th>
@@ -107,7 +133,9 @@
         <tbody>
         
           <tr ng-if="tickets" ng-repeat='i in tickets'>
-
+            
+            <td><label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="{{i.ticket_id}}">
+              <input type="checkbox" id="{{i.ticket_id}}"  ng-model="checkbox" value="{{i.ticket_id}}" class="mdl-checkbox__input" ng-change="getChecked(checkbox,i.ticket_id)" ></td>
             <td>{{ i.ticket_id }}</td>
             <td class="something" id="{{i.ticket_id}}">{{ i.subject }}
               <div class="mdl-tooltip" data-mdl-for="{{i.ticket_id}}">

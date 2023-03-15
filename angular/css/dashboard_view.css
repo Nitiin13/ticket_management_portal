@@ -2,7 +2,7 @@
     overflow: hidden;
 } */
 .section_1_container{
-    margin-top:97px;
+    margin-top:33px;
     margin-left:89px;
     display: flex;
     flex-direction: row;
@@ -15,7 +15,55 @@
   justify-self: baseline;
 
 }
+.count_info{
+    display:flex;
+  
+    
+  
+}
+.ticket_count{
+    margin-left: 30px;
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+    color:#212121;
+}
 
+.ticket_actions{
+    height: 56px;
+    display: flex;
+flex-direction: row;
+align-items:center;
+background-color:#EBF1FE;
+
+}
+.extra_actions{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.update_section{
+    display: flex;
+    margin-left: 50px;
+    align-content:center;
+    align-items: center;
+    color:var(--primary);
+}
+.update_section_disabled{
+    display: flex;
+    margin-left: 50px;
+    align-content:center;
+    align-items: center;
+    color:#0000001F;
+    opacity: 1;
+}
+.delete_section{
+    display: flex;
+    margin-left: 50px;
+    align-content:center;
+    align-items: center;
+    color:var(--primary);
+}
 #person_icon{
     width: 16px;
     height: 16px;
@@ -112,6 +160,10 @@ margin-top: 48.5px;
     max-width: 162px;
    
  
+}
+.drop_down_status{
+ width:148px;
+ margin-left: 30px;
 }
 .mdl-data-table td:hover{
     color:var(--primary);

@@ -416,7 +416,7 @@ else{
                     $rootScope.isLoggedIn=true;
                     $rootScope.userid=user_info['user_id'];
                     $rootScope.role=user_info['role'];
-                    console.log($rootScope.role);
+                
                     $rootScope.name=user_info['name'];
                    var a={
                     'userid':$rootScope.userid
@@ -488,8 +488,32 @@ app.controller("ticketController",function($scope,tickets,$rootScope,$state,$win
         {
             id:1,name:'Last Updated'
         }];
-        
+        $scope.Sglchk=false;
+        $scope.delupdate=false;
+        $scope.lst = [];
+        $scope.getChecked = function(check,value){
+            if(check){
+                $scope.lst.push(value);
+            }else{
+                 $scope.lst.splice($scope.lst.indexOf(value), 1);
+            }
+            $scope.chklength=$scope.lst.length;
+            if($scope.chklength!=0)
+            {
+                if($scope.chklength>1)
+                {
+                    $scope.Sglchk=true;
+                }
+                else{
+                    $scope.Sglchk=false;
+                }
+                $scope.delupdate=true;
+            }
+            else{
+                $scope.delupdate=false;
+            }
 
+        };
           $scope.statusChanged = function(item,t_id){       
                 a=item;
                     ticket=t_id;
