@@ -1,0 +1,240 @@
+/* body{
+    overflow: hidden;
+} */
+.section_1_container{
+    margin-top:97px;
+    margin-left:89px;
+    display: flex;
+    flex-direction: row;
+    
+}
+.id_section{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+  justify-self: baseline;
+
+}
+
+#person_icon{
+    width: 16px;
+    height: 16px;
+    position: relative;
+    top:4px;
+    right: 5px;
+    color:black;
+}
+.id_name{
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 24px;
+    width: 120px;
+    opacity: 1;
+    text-align: left;
+    color: #000000BC;
+    font-family: 'Open Sans', sans-serif;
+}
+#btn_ticket{
+    font-size: 14px;
+    width: 167px;
+    height: 35px;
+    font-family: 'Open Sans', sans-serif;
+    text-transform: none;
+    margin-left:27px;
+    text-align: left;
+    line-height: 20px;
+    background-color:var(--primary);
+    color:#ffffff;  
+    opacity: 1;
+}
+#btn_ticket_download{
+    font-size: 14px;
+    width: 176px;
+    height: 35px;
+    font-family: 'Open Sans', sans-serif;
+    text-transform: none;
+    margin-left:27px;
+    line-height: 20px;
+    background-color:var(--green-primary);
+    opacity: 1;
+    color:#ffffff;  
+}
+.Action_section{
+    display: flex;
+    flex-direction: row;
+    
+    
+}
+#logout{
+    margin-left: 513px;
+    border: 1px solid #9B9B9B;
+    color:#9B9B9B;
+    text-transform: none;
+    border-radius: 3px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    width: 93px;
+    height: 35px;
+    line-height: 22px;
+
+}
+.ttable{
+    overflow-x:scroll
+}
+.ttable::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
+.mdl-data-table
+{
+    width: 1488px;
+   table-layout: auto;
+ 
+}
+.table_footer{
+display: flex;
+align-items: center;
+justify-content: center;
+width: 100%;
+margin-top: 48.5px;
+}
+.mdl-data-table th{
+    text-align: left;
+
+    
+}
+
+.mdl-data-table td{
+    vertical-align: unset;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 162px;
+   
+ 
+}
+.mdl-data-table td:hover{
+    color:var(--primary);
+}
+.mdl-tooltip{
+    max-width: fit-content;
+}
+.table_footer h5{
+    font-family: 'Open Sans', sans-serif;
+    opacity: 1;
+    font-size: 14px;
+    color:var(--disabled-text-color);
+}
+.small_screen_only{
+    display: none;
+}
+.filters_section{
+    margin-top:29px;
+    margin-left:89px;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: baseline;
+}
+.ticket_status_outer{
+    position: relative;
+    font-weight: 600;
+    font-size: 18px;
+    font-family: 'OpenSans',sans-serif;
+    letter-spacing: 0px;
+color: #212121;
+opacity: 1;
+line-height: 22px;
+}
+#status_menu{
+    width: 176px;
+    height: 86px;
+}
+#sort_menu{
+    width:224px;
+    height: 129px;
+}
+#disabled_option{
+    color:var(--disabled-text-color);
+}
+.filters_actions{
+    display: flex;
+    flex-direction: row;
+    margin-left: 53px;
+    align-items: baseline;
+    position: relative;
+}
+#filter_button{
+    width:121px;
+    text-transform: none;
+    height: 35px;
+    border-radius: 3px;
+    border: 1px solid #0000001F;
+    opacity: 1;
+}
+#sort_button{
+    width:121px;
+    text-transform: none;
+    height: 35px;
+    border-radius: 3px;
+    border: 1px solid #0000001F;
+    opacity: 1;
+    margin-left: 36px;
+}
+#search_bar{
+    width:256px;
+  
+}
+#s_box{
+    display: flex;
+    align-items: baseline;
+    margin-left: 35px;
+}
+
+
+@media only screen and (max-width: 391px){
+    
+  .large_screen_only{
+    display: none;
+  }
+  .section_1_container{
+    margin:49px auto auto auto;
+  }
+  #logout{
+    margin-left: 105px;
+    
+    
+  }
+  
+  .small_screen_only{
+    display: flex;
+    width: 100%;
+    margin:20px auto auto auto;
+  }
+  #btn_ticket_download{
+    margin-left: 7px;
+  }
+  #btn_ticket{
+    margin-left: 0px;
+  }
+  .filters_section{
+    flex-direction: column;
+    margin:56px auto auto auto;
+    align-items: flex-start;
+  }
+  .filters_actions{
+    margin-left: 0px;
+    margin-top: 15px;
+  }
+  #s_box{
+    margin-top: 30px;
+    margin-left:0px;
+  }
+  #search_bar{
+
+    width:295px;
+  
+}
+   
+
+}

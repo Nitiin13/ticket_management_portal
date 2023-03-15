@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+:root {
+    --primary: #4275F4;
+    --secondary: #ffffff;
+    --dark-color:#212121;
+    --green-primary:#71D28E;
+    --disabled-text-color:#9B9B9B;
+  }
+
+#login-div{
+    /* margin-top:130px;
+    margin-left:466px; */
+    margin :120px auto auto auto;
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    width: 328px;
+    border-radius: 4px;
+    opacity: 1;
+    
+    padding: 12px 14px;
+}
+.inpt-section{
+    margin-top: 32px;
+}
+#lgn-header{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        font-family:'Open Sans', sans-serif;
+        font-size:20px;
+        font:bold;
+        font-weight:800;
+        letter-spacing: 0px;
+        line-height:24px;
+        color: var(--dark-color);
+        opacity: 1;
+}
+#lgn-textfield{
+       
+            width: 100%;
+        /* height: 56px; */
+        text-align: left;
+        font-family:'Open Sans', sans-serif;
+        font-size:16px;
+        letter-spacing: 0.15px;
+        color: #9B9B9B;
+        line-height: 24px;
+        
+    
+        opacity: 1;
+}
+#btn-primary{
+    top:30px;
+    width: 100%;
+height: 40px;
+background-color:  var(--primary);
+color:var(--secondary);
+letter-spacing: 0px;
+}
+#rm-span{
+    text-align: left;
+
+    font-family:'Open Sans', sans-serif;
+    font-size:14px;
+letter-spacing: 0px;
+color: var(--dark-color);
+opacity: 1;
+}
+.chk-section{
+    display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+
+}
+
+#fm-span{
+    color:var(--primary);
+    font-size:14px;
+    letter-spacing: 0px;
+}
+.extra
+{
+    margin-top: 30px;
+    position: relative;
+    align-self: flex-start;
+    
+}
+.extra>a{
+    color:var(--primary);
+}
+.inpt-icon{
+  margin-left:290px;
+
+}
+
+#icon{
+    color: var(--dark-color);
+     opacity: 1;
+}
+@media only screen and (max-width: 391px){
+    
+    #login-div{
+        width: 350px;
+        box-sizing: border-box;
+    }
+    form{
+        width:100%;
+    }
+  
+    #lgn-header{
+     
+        align-self: flex-start;
+        justify-content: left;
+    }
+   
+}

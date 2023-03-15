@@ -1,0 +1,150 @@
+<div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone mdl-col--8-col-tablet" >
+
+    <div class="section_1_container">
+        
+        <div class="id_section">  
+            <i id="person_icon" class="material-icons">person</i> &nbsp; &nbsp;
+            <span class="id_name">{{name}}</span>
+           
+        
+        <div class="Action_section">
+            <div class="large_screen_only">
+            <button class="mdl-button mdl-js-button mdl-button--raised" id="btn_ticket" ng-if="!admin">
+                <i class="material-icons">add</i>
+                Add new ticket
+              </button>
+              <button class="mdl-button mdl-js-button mdl-button--raised" id="btn_ticket_download">
+                <i class="material-icons">download</i>
+                Download Table
+              </button>
+            </div>
+          
+            <button class="mdl-button mdl-js-button" ng-controller="logoutController" ng-click="logout()"id="logout">
+              Logout
+             </button>  
+           
+        </div>
+      </div>
+       
+    </div>
+    
+    <div class="small_screen_only">
+      <button class="mdl-button mdl-js-button mdl-button--raised" id="btn_ticket" ng-if="!admin">
+          <i class="material-icons">add</i>
+          Add new ticket
+        </button>
+        <button class="mdl-button mdl-js-button mdl-button--raised" id="btn_ticket_download">
+          <i class="material-icons">download</i>
+          Download Table
+        </button>
+      </div>
+    </div>
+    <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone" >
+      <div class="filters_section">
+        <div class="tickets_filter_outer">  
+           <span class="ticket_status_outer">Open Tickets<span>(6)</span>
+         
+                <button id="lang-switcher" class="mdl-button mdl-js-button mdl-button--icon">
+                  <i class="material-icons">expand_more</i>
+                  
+                </button>
+                <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="lang-switcher" id="status_menu" ng-model="status" >
+                    <li class="mdl-menu__item" ng-repeat='item in status' value="{{item.id}}">{{item.name}}</li>
+                  </ul>
+              </span>
+              
+         
+      </div>
+      <div class="filters_actions" ng-if="admin">
+        <button class="mdl-button mdl-js-button" id="filter_button">
+          <i class="material-icons">filter_list</i>
+          Filters
+         </button>  
+         <button class="mdl-button mdl-js-button" id="sort_button">
+          <i class="material-icons">sort</i>
+          Sort By
+         </button> 
+         <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-left" for="sort_button" id="sort_menu" ng-model="sort" >
+          <li class="mdl-menu__item" id="disabled_option">SORT BY</li>
+          <li class="mdl-menu__item" ng-repeat='item in sort' value="{{item.id}}">{{item.name}}</li>
+        </ul>
+         </div>
+         <div id="s_box">
+            <div class="inpt-icon2">
+                  <label class="mdl-button mdl-js-button mdl-button--icon" for="sample3">
+                      <span id="icon" class="material-icons" ng-click="viewDetails()">
+                          search
+                          </span>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield"  id="search_bar">
+                <input class="mdl-textfield__input" type="text" name="search" id="search">
+                <label class="mdl-textfield__label" id="search_text"for="search">Search by ticket name or ID</label>
+            </div>
+           
+          </div>
+          <select  class="mdl-textfield__input">
+            <!-- ng-options="item as item.name for item in items" -->
+
+            <option ng-repeat='item in items' value="{{item.id}}">{{item.name}}</option>
+          </select>
+         
+    </div>
+    </div>
+    <div class="mdl-cell mdl-cell--12-col" >
+      <div class="ttable">
+      <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+        <thead>
+          <tr>
+            <th>Ticket ID</th>
+            <th class="mdl-data-table__cell--non-numeric">Subject</th>
+            <th>Contact Name</th>
+            <th>Status</th>
+            <th ng-if="admin">Ticket Owner</th>
+            <th>Last Updated Status</th>
+          </tr>
+        </thead>
+        <tbody>
+        
+          <tr ng-if="tickets" ng-repeat='i in tickets'>
+
+            <td>{{ i.ticket_id }}</td>
+            <td class="something" id="{{i.ticket_id}}">{{ i.subject }}
+              <div class="mdl-tooltip" data-mdl-for="{{i.ticket_id}}">
+                <strong>{{i.subject}}</strong>
+                </div>
+            </td>
+            <td ng-if="admin">{{i.admin_name}}</td>
+            <td ng-if="!admin">{{i.name}}</td>
+            <td ng-if="!admin" >{{items[i.status].name}}</td>
+       
+            <td ng-if="admin">
+              <select  class="mdl-textfield__input" ng-model="i.status" ng-change="statusChanged(i.status,i.ticket_id)">
+                <!-- ng-options="item as item.name for item in items" -->
+
+                <option ng-repeat='item in items' value="{{item.id}}">{{item.name}}</option>
+              </select>
+              
+            </td>
+            
+            <td ng-if="admin">{{i.user_name}}</td>
+        
+            <td>{{i.updation_time}}</td>
+           <td ng-if="!tickets">no tickets</td>
+          </tr>
+          
+          
+        </tbody>
+      </table>
+      
+    </div>
+    
+    <div class="table_footer">
+      
+      <div ng-if="!tickets"> <button class="mdl-button mdl-js-button mdl-button--raised" id="btn_ticket" ng-if="!admin">
+        <i class="material-icons">add</i>
+        Add new ticket
+      </button></div><h5 ng-if="tickets">No more Tickets to display</h5></div>
+    </div>
+ 
+</div>
