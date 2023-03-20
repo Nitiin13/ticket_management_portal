@@ -194,8 +194,13 @@ app.controller('signupController',function($scope,serviceApi,$state,$rootScope){
                 $scope.password = null;
                 $scope.re_password = null;
             }
+        }else{
+            var snackbarContainer = document.querySelector('#demo-toast-example');
+            var data = {message: 'Please enter Email and Password'};
+            snackbarContainer.MaterialSnackbar.showSnackbar(data);
         }
     }
+    
     $scope.show_password = function(){
         let input = document.getElementById('pass');
         let icon=document.getElementById('password_icon');
@@ -244,7 +249,13 @@ app.controller('forgotPasswordController',function($scope,$http,$state,serviceAp
         return string.split(' ').join('');  
     } 
     $scope.gen_captcha = GenerateCaptcha();
-
+    var tCtx = document.getElementById('textCanvas').getContext('2d'), //Hidden canvas
+    imageElem = document.getElementById('image');
+    tCtx.font = "20px open sans";
+    // tCtx.textAlign = "center";
+    tCtx.fillText($scope.gen_captcha,128,48);
+    
+    // imageElem.src = tCtx.canvas.toDataURL();
     $scope.submitDetails = function(){
         if($scope.email!=null && $scope.captcha!=null && $scope.email!='' && $scope.captcha!=''){
             var captcha_status = ValidateCaptcha($scope.gen_captcha,$scope.captcha);
@@ -261,7 +272,9 @@ app.controller('forgotPasswordController',function($scope,$http,$state,serviceAp
                             $state.go('otp',datap);
                         }
                         else{
-                            alert("Email does not exist");
+                            var snackbarContainer = document.querySelector('#demo-toast-example');
+                            var data = {message: 'Email Does Not Exist'};
+                            snackbarContainer.MaterialSnackbar.showSnackbar(data);
                             console.log(response.data);
                         }
                 },function(response){});
