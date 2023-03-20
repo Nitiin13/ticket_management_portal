@@ -548,8 +548,15 @@ app.controller("ticketController",function($scope,tickets,$rootScope,$state,$win
       else{
         $scope.tickets=$stateParams.tickets_data;
       }
-        
-       $scope.filters_to_be_applied=$stateParams.filters_to_be_applied;
+    
+      if($stateParams.filters_to_be_applied==null){
+        $scope.filters_to_be_applied = {};
+      }
+      else{
+        $scope.filters_to_be_applied=$stateParams.filters_to_be_applied;
+      }
+    
+       
         $scope.items = [
             { id: 0, name: 'to be reviewed' },
             { id: 1, name: 'In progress' },
