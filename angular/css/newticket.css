@@ -1,0 +1,131 @@
+.mdl-grid{
+    padding:0px;
+}
+.table{
+    margin-left: 10px;
+}
+#field_errors{
+    color: #d50000;
+    position: absolute;
+    font-size: 12px;
+    margin-top: 3px;
+    /* visibility: hidden; */
+    display: block;
+
+}
+.common_container{
+    margin-left:60px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 29px;
+    align-items: flex-start;
+    font-family: var(--font-style);
+}
+.page_desc{
+    display: flex;
+    flex-direction: column;
+}
+#page_link{
+    color:var(--primary);
+}
+#desc{
+     margin-top:24px;
+}
+.ticket_form{
+    margin-top: 48px;
+    width: 742px;
+}
+.pre_filled_info{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+#tktextfield{
+    width:328px;
+ 
+
+opacity: 1;
+}
+#Actextfield{
+    width: 328px;
+    margin-left: 88px;
+    opacity: 1;
+}
+#subtextfield{
+    width: 100%;
+    
+}
+.form_actions{
+    margin: 0;
+    left: 0;
+    height: 81px;
+    border: 1px solid #7070705C;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    box-shadow: 0px -4px 6px #00000029;
+    
+}
+.common_section{
+    margin-left: 60px;
+}
+.common_section>button{
+    width: 125px;
+    height: 40px;
+    text-transform: none;
+}
+
+#sbt-primary{
+  
+    background-color: #4275F4;
+    border-radius: 3px;
+    color: #FFFFFF;
+    text-transform: none;
+   
+}
+#discard-primary{
+    color: var(--disabled-text-color);
+    background-color: #FFFFFF;
+    border:1px solid var(--disabled-text-color);
+    opacity: 1;
+    margin-left: 29px;
+}
+.editor1{
+    margin-top: 20px;
+}
+.attachment_section{
+    margin-top:56px;
+}
+#attach_info{
+    color:var(--primary);
+}
+#uploadIcon{
+    color:#000000;
+}
+@media only screen and (max-width: 391px){
+    
+ .common_container{
+    margin: 35px auto auto auto;
+ }
+ .ticket_form{
+    width: 350px;
+    
+ }
+ .pre_filled_info{
+    flex-direction: column;
+    width: 350px;
+ }
+#tktextfield{
+    width: 100%;
+}
+ #Actextfield{
+    margin: 0;
+    width: 100%;
+ }
+ #subtextfield{
+    width: 100%;
+}
+.common_section{
+    margin:auto;
+}
+}

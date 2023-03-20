@@ -5,12 +5,12 @@
         
         <div class="id_section">  
             <i id="person_icon" class="material-icons">person</i> &nbsp; &nbsp;
-            <span class="id_name">{{name}}</span>
+            <span class="id_name">{{loggedname}}</span>
            
         
         <div class="Action_section">
             <div class="large_screen_only">
-            <button class="mdl-button mdl-js-button mdl-button--raised" id="btn_ticket" ng-if="!admin">
+            <button class="mdl-button mdl-js-button mdl-button--raised" id="btn_ticket" ng-click="navigate()" ng-if="!admin">
                 <i class="material-icons">add</i>
                 Add new ticket
               </button>
@@ -30,7 +30,7 @@
     </div>
     
     <div class="small_screen_only">
-      <button class="mdl-button mdl-js-button mdl-button--raised" id="btn_ticket" ng-if="!admin">
+      <button class="mdl-button mdl-js-button mdl-button--raised" id="btn_ticket" ng-click="navigate()" ng-if="!admin">
           <i class="material-icons">add</i>
           Add new ticket
         </button>

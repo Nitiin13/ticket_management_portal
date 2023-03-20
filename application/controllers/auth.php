@@ -316,6 +316,7 @@
           $user_email=$user['email'];
           $user_role=$user['role'];
           $user_name=$user['name'];
+         
       }
       $session_array=array(
          'ses_id'=>$user_id,
