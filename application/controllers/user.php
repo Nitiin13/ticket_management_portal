@@ -21,7 +21,7 @@
       $tickets=$this->user_model->getTickets($userid);
    
      }
-            $this->output->set_content_type('application/json')->set_output(json_encode($tickets)); 
+      $this->output->set_content_type('application/json')->set_output(json_encode($tickets)); 
       
     }
     public function update_ticket_status()

@@ -5,7 +5,7 @@ application/cache/*
 !application/cache/.htaccess
 
 user_guide/*
-
+Plan/*
 application/config/development
 application/email_config/*
 application/sendgrid-php/*

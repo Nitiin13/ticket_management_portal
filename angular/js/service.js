@@ -34,6 +34,17 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
         return request;
 
     }
+    serviceApi.startsession=function(data){
+        var request =$http({
+                method: 'POST',
+                url : 'auth/start_Session_signup',
+                headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+                data: data
+            });
+        
+        return request;
+
+    }
     // serviceApi.check_email=function(data){
     //     var request =$http({
     //         method:'POST',
@@ -92,6 +103,25 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
             data:data
         });
         return ticket;
+    serviceApi.filter_tickets=function(data)
+    {
+        var filter=$http({
+            method:'POST',
+            url:'ticket/filter_tickets',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data:data
+
+        });
+        return filter;
+    }
+    serviceApi.populate_filter=function()
+    {
+        var populate=$http({
+            method:'POST',
+            url:'ticket/populate_filter',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        });
+        return populate;
     }
     return serviceApi;}
-    );
+});

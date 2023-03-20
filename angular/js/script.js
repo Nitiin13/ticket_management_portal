@@ -1,4 +1,4 @@
-var app=angular.module("myApp", ["ui.router","ServiceModule","angularFileUpload"]);
+var app=angular.module("myApp", ["ui.router","ServiceModule","angularFileUpload","angularModalService"]);
 app.directive("ckeditor", [function(){
     return {
         restrict: "A",
@@ -52,6 +52,10 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
         url:'/ticket/:userid',
         templateUrl:'angular/templates/dashboard_view.html',
         controller:'ticketController',
+        params: {
+            tickets_data:null,
+            filters_to_be_applied:null
+        },
         resolve:{
           
            tickets: ['$stateParams', 'serviceApi', function ($stateParams, serviceApi)  {
@@ -81,14 +85,16 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
     }).state('otp',{
         url:'/otp',
         params: {
-            email:null
+            email:null,
+            userid:null
         },
         templateUrl:'angular/templates/otp.html',
         controller:'otpController'
     }).state('resetpassword',{
         url:'/resetpassword',
         params: {
-            email:null
+            email:null,
+            userid:null
         },
         templateUrl:'angular/templates/resetpassword.html',
         controller:'resetpasswordController'
@@ -96,6 +102,27 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
         url:'/test',
         templateUrl:'angular/templates/test.html',
         controller:'testController'
+    }).state('filter',{
+        url:'/filter',
+        templateUrl:'angular/templates/filter_modal.html',
+        controller:'filterModalController',
+        params: {
+            filters_to_be_applied:null
+        },
+        resolve:{
+          
+            populate_data: ['serviceApi', function (serviceApi)  {
+                 // $stateParams will contain any parameter defined in your url
+                // serviceApi.populate_filter().then(function(response){
+                //     return response.data;
+                // },function(response){
+            
+                // });
+
+                return serviceApi.populate_filter()
+                
+                
+         }]}
     })
 });
 app.controller('testController',function($scope){
@@ -119,7 +146,7 @@ snackbarContainer.MaterialSnackbar.showSnackbar(data);
 });
 
 });
-app.controller('signupController',function($scope,serviceApi){
+app.controller('signupController',function($scope,serviceApi,$state,$rootScope){
     $scope.password = null;
     $scope.re_password = null;
     $scope.name = null;
@@ -138,11 +165,21 @@ app.controller('signupController',function($scope,serviceApi){
                     if((response.data.success==1))
                     {
                         console.log(response.data);
-                        alert('Sign Up Successful');
-                        $scope.password = null;
-                        $scope.re_password = null;
-                        $scope.name = null;
-                        $scope.email = null;
+                        var datap  = {
+                            'userid':response.data.data.user_id
+                        }
+                        var postData = 'myData='+JSON.stringify(datap);
+                        serviceApi.startsession(postData).then(function(response){
+                            if(response.data.success==1)
+                            {
+                                $rootScope.session='1';
+                                $rootScope.isLoggedIn=true;
+                                $rootScope.userid=response.data.data.user_id;
+                                $rootScope.role=response.data.data.user_role;
+                                $rootScope.name=response.data.data.user_name;
+                                $state.go('Ticket',datap);
+                            }
+                        },function(response){});
                     }
                     else
                     {
@@ -185,6 +222,7 @@ app.controller('signupController',function($scope,serviceApi){
 app.controller('forgotPasswordController',function($scope,$http,$state,serviceApi){
     $scope.email = null;
     $scope.captcha = null;
+    $scope.captcha_error=false;
     function GenerateCaptcha() {  
         var chr1 = Math.ceil(Math.random() * 10) + '';  
         var chr2 = Math.ceil(Math.random() * 10) + '';  
@@ -210,7 +248,7 @@ app.controller('forgotPasswordController',function($scope,$http,$state,serviceAp
         if($scope.email!=null && $scope.captcha!=null && $scope.email!='' && $scope.captcha!=''){
             var captcha_status = ValidateCaptcha($scope.gen_captcha,$scope.captcha);
             if(captcha_status){
-                console.log("Passed captcha");
+                // console.log("Passed captcha");
                 var datap  = {
                     'email':$scope.email
                 }
@@ -218,9 +256,8 @@ app.controller('forgotPasswordController',function($scope,$http,$state,serviceAp
                 serviceApi.otp(postData).then(function(response){
                     console.log(response.data);
                         if(response.data.success==1){
-
+                            datap.userid=response.data.data.userid;
                             $state.go('otp',datap);
-                            // location.replace("auth/which_email");
                         }
                         else{
                             alert("Email does not exist");
@@ -229,18 +266,31 @@ app.controller('forgotPasswordController',function($scope,$http,$state,serviceAp
                 },function(response){});
             }
             else{
-                console.log("Failed captcha");
+                var snackbarContainer = document.querySelector('#demo-toast-example');
+                var data = {message: 'Wrong Captcha'};
+                snackbarContainer.MaterialSnackbar.showSnackbar(data);
+                $scope.captcha=null;
             }
+        }else{
+            var snackbarContainer = document.querySelector('#demo-toast-example');
+            var data = {message: 'Please enter Captcha and Email'};
+            snackbarContainer.MaterialSnackbar.showSnackbar(data);
         }
     }
 });
-app.controller('otpController',function($scope,$http,$rootScope,$stateParams,$window,serviceApi,$state) {
+app.controller('otpController',function($scope,$http,$stateParams,$window,serviceApi,$state) {
     $scope.show_error=false;
     if($stateParams.email==null){
         $scope.email = $window.mini_user_email;
     }
     else{
         $scope.email = $stateParams.email;
+    }
+    if($stateParams.userid==null){
+        $scope.userid = $window.mini_user_id;
+    }
+    else{
+        $scope.userid = $stateParams.userid;
     }
     $scope.display_email='';
     let t=0;
@@ -277,8 +327,12 @@ app.controller('otpController',function($scope,$http,$rootScope,$stateParams,$wi
                 .then(function(response) {
                     console.log(response.data);
                     if(response.data.success==1){
-                        $rootScope.email = $scope.email;
-                        $state.go('resetpassword',{'email':$scope.email});
+                        // $rootScope.email = $scope.email;
+                        datap={
+                            'email':$scope.email,
+                            'userid':$scope.userid
+                        }
+                        $state.go('resetpassword',datap);
                     }
                     else{
                         $scope.show_error=true;
@@ -312,12 +366,18 @@ app.controller('otpController',function($scope,$http,$rootScope,$stateParams,$wi
         }
     }
 });
-app.controller('resetpasswordController', function($scope,$stateParams,$window,serviceApi){
+app.controller('resetpasswordController', function($scope,$stateParams,$window,serviceApi,$rootScope,$state){
     if($stateParams.email==null){
         $scope.email = $window.mini_user_email;
     }
     else{
         $scope.email = $stateParams.email;
+    }
+    if($stateParams.userid==null){
+        $scope.userid = $window.mini_user_id;
+    }
+    else{
+        $scope.userid = $stateParams.userid;
     }
     console.log($scope.email);
     $scope.new_pass = null;
@@ -335,7 +395,21 @@ app.controller('resetpasswordController', function($scope,$stateParams,$window,s
             serviceApi.resetpassword(postData).then(function(response){
                 console.log(response.data);
                     if(response.data.success==1){
-                        console.log('Password Reset Successfull');
+                        var datap  = {
+                            'userid':$scope.userid
+                        }
+                        var postData = 'myData='+JSON.stringify(datap);
+                        serviceApi.startsession(postData).then(function(response){
+                            if(response.data.success==1)
+                            {
+                                $rootScope.session='1';
+                                $rootScope.isLoggedIn=true;
+                                $rootScope.userid=response.data.data.user_id;
+                                $rootScope.role=response.data.data.user_role;
+                                $rootScope.name=response.data.data.user_name;
+                                $state.go('Ticket',datap);
+                            }
+                        },function(response){});
                         // location.replace("auth/which_email");
                     }
                     else{
@@ -472,7 +546,7 @@ else{
               }
 
 }});
-app.controller("ticketController",function($scope,tickets,$rootScope,$state,$window,serviceApi){
+app.controller("ticketController",function($scope,tickets,$rootScope,$state,$window,serviceApi,ModalService,$stateParams){
    
     // if($rootScope.session!='0' || $rootScope.isLoggedIn!=null)
     if($rootScope.session!='0')
@@ -480,6 +554,8 @@ app.controller("ticketController",function($scope,tickets,$rootScope,$state,$win
         $scope.navigate=function(){
             $state.go('NewTicket');
         }
+        $scope.it='-1';
+        $scope.keyword = null;
         console.log('logged in');
 
       console.log($rootScope.role);
@@ -490,8 +566,14 @@ app.controller("ticketController",function($scope,tickets,$rootScope,$state,$win
       else{
         $rootScope.admin=false;
       }
+      if($stateParams.tickets_data==null){
         $scope.tickets=tickets.data;
-       
+      }
+      else{
+        $scope.tickets=$stateParams.tickets_data;
+      }
+        
+       $scope.filters_to_be_applied=$stateParams.filters_to_be_applied;
         $scope.items = [
             { id: 0, name: 'to be reviewed' },
             { id: 1, name: 'In progress' },
@@ -507,6 +589,8 @@ app.controller("ticketController",function($scope,tickets,$rootScope,$state,$win
             id:1,name:'Closed Tickets'
         }];
         $scope.sort=[{
+            id:-1,name:'None'
+          },{
             id:0,name:'New Tickets'
           },
         {
@@ -555,11 +639,283 @@ app.controller("ticketController",function($scope,tickets,$rootScope,$state,$win
 
                     });
                 }
+        
+        $scope.sortby = function(id){
+            console.log(id);
+            if(id>-1){
+                $scope.filters_to_be_applied.sortby= id;
+                $scope.tickets = '';
+                var filter_data = 'myData='+JSON.stringify($scope.filters_to_be_applied);
+                serviceApi.filter_tickets(filter_data).then(function(response){
+                    $scope.tickets=response.data;
+                },function(response){
+
+                });
+            }
+            else{
+                $scope.tickets = '';
+                delete $scope.filters_to_be_applied.sortby;
+                var filter_data = 'myData='+JSON.stringify($scope.filters_to_be_applied);
+                serviceApi.filter_tickets(filter_data).then(function(response){
+                    $scope.tickets=response.data;
+                },function(response){
+
+                });
+            }
+
+        }
+        $scope.status_filter = function(id){
+            console.log(id);
+            
+            if(id>-1){
+                $scope.filters_to_be_applied.status = id;
+                $scope.tickets = '';
+                // var filter_tickets={
+                //     'sortby':id
+                // }
+                var filter_data = 'myData='+JSON.stringify($scope.filters_to_be_applied);
+                serviceApi.filter_tickets(filter_data).then(function(response){
+                    $scope.tickets=response.data;
+                },function(response){
+
+                });
+            }
+            else{
+                $scope.tickets = '';
+                delete $scope.filters_to_be_applied.status;
+                var filter_data = 'myData='+JSON.stringify($scope.filters_to_be_applied);
+                serviceApi.filter_tickets(filter_data).then(function(response){
+                    $scope.tickets=response.data;
+                },function(response){
+
+                });
+            }
+
+        }
+        $scope.search = function(keyword){
+            if(keyword!=null && keyword!=''){
+                // console.log('Inside if ');
+                $scope.filters_to_be_applied.keyword = keyword;
+                $scope.tickets = '';
+                var filter_data = 'myData='+JSON.stringify($scope.filters_to_be_applied);
+                serviceApi.filter_tickets(filter_data).then(function(response){
+                    $scope.tickets=response.data;
+                },function(response){
+
+                });
+            }
+            else{
+                // console.log('Inside else ');
+                $scope.tickets = '';
+                delete $scope.filters_to_be_applied.keyword;
+                var filter_data = 'myData='+JSON.stringify($scope.filters_to_be_applied);
+                serviceApi.filter_tickets(filter_data).then(function(response){
+                    $scope.tickets=response.data;
+                },function(response){
+
+                });
+            }
+        }
+        $scope.filtermodal = function(){
+            console.log('Here');
+            $state.go('filter',{'filters_to_be_applied':$scope.filters_to_be_applied});
+            // ModalService.showModal({
+            //     // templateUrl: "angular/templates/filter_modal.html",
+            //     template:'<div class="modal" role="dialog" aria-hidden="true" >\
+            //     <div class="modal__dialog style="maximize-width">\
+            //     <div class="modal-invisible-class" ng-click="close($event)"></div>\
+            //     <div class="modal__content adjust-modal-small modal__below_header mdl-shadow--2dp border-radius-4" style="padding: 0px; max-width: 600px;">\
+            //                                                     <div>here</div>\
+            //                                     </div>\
+            //     </div>\
+            //     </div>\
+            //     </div>\
+            //     </div>',
+            //     controller: "filterModalController"
+            //   }).then(function(modal) {
+            //     // The modal object has the element built, if this is a bootstrap modal
+            //     // you can call 'modal' to show it, if it's a custom modal just show or hide
+            //     // it as you need to.
+            //     // modal.element.modal();
+            //     modal.close.then(function(result) {
+            //       $scope.message = result ? "You said Yes" : "You said No";
+            //     });
+            //   });
+        }
        
     }else{
         $state.go('Home');
     }
+});
+
+app.controller('filterModalController',function($scope,serviceApi,populate_data,$state,$stateParams){
+    // $scope.dismissModal = function(result) {
+    //     close(result, 200); // close, but give 200ms for bootstrap to animate
+    // };
+    console.log('Inside');
+    $scope.discardfilter = function()
+    {
+        $scope.filters_to_be_applied = {};
+
+        $scope.pr = "-1";
+        $scope.ap = "-1";
+        $scope.st = "-1";
+        $scope.ind = "-1";
+        $scope.at = "-1";
+        
+    }
+
+    $scope.assigned_to = populate_data.data.assigned_to;
+    if($stateParams.filters_to_be_applied!=null) {
+        console.log($stateParams.filters_to_be_applied);
+        $scope.filters_to_be_applied = $stateParams.filters_to_be_applied;
+        
+        if($scope.filters_to_be_applied.email){
+
+            $scope.email = $scope.filters_to_be_applied.email;
+        }
+        else{
+            $scope.email = null;
+        }
+        if($scope.filters_to_be_applied.account_number){
+
+            $scope.account_number = $scope.filters_to_be_applied.account_number;
+        }
+        else{
+            $scope.account_number = null;
+        }
+        if($scope.filters_to_be_applied.ticket_owner){
+
+            $scope.ticket_owner = $scope.filters_to_be_applied.ticket_owner;
+        }
+        else{
+            $scope.ticket_owner = null;
+        }
+        if($scope.filters_to_be_applied.priority){
+
+            $scope.pr = $scope.filters_to_be_applied.priority;
+        }
+        else{
+            $scope.pr = "-1";
+        }
+        if($scope.filters_to_be_applied.assistance_process){
+
+            $scope.ap = $scope.filters_to_be_applied.assistance_process;
+        }
+        else{
+            $scope.ap = "-1";
+        }
+        if($scope.filters_to_be_applied.status){
+
+            $scope.st = $scope.filters_to_be_applied.status;
+        }
+        else{
+            $scope.st = "-1";
+        }
+        if($scope.filters_to_be_applied.internal_department){
+
+            $scope.ind = $scope.filters_to_be_applied.internal_department;
+        }
+        else{
+            $scope.ind = "-1";
+        }
+        if($scope.filters_to_be_applied.assigned_to){
+
+            $scope.at = $scope.filters_to_be_applied.assigned_to;
+        }
+        else{
+            $scope.at = "-1";
+        }
+    }
+    else{
+        $scope.discardfilter();
+    }
     
+    $scope.status = [
+        { id: 0, name: 'to be reviewed' },
+        { id: 1, name: 'In progress' },
+        { id: 2, name: 'on hold' },
+        {id:3,name:'resolved'},
+        {id:4,name:'dropped'},
+        {id:5,name:'resolved and closed'}
+    ];
+    $scope.priority = [
+        { id: 0, name: 'none' },
+        { id: 1, name: 'low' },
+        { id: 2, name: 'medium' },
+        { id: 3, name: 'high' }
+    ]
+    $scope.internal_department = [
+        { id: 0, name: 'none' },
+        { id: 1, name: 'option1' },
+        { id: 2, name: 'option2' },
+        { id: 3, name: 'option3' }
+    ]
+    $scope.assistance_process = [
+        { id: 0, name: 'none' },
+        { id: 1, name: 'option1' },
+        { id: 2, name: 'option2' },
+        { id: 3, name: 'option3' }
+    ]
+
+    $scope.submitfilter = function(){
+        console.log($scope.pr);
+        if($scope.pr!="-1"){
+            $scope.filters_to_be_applied.priority = $scope.pr;
+        }
+
+        if($scope.ap!="-1"){
+            $scope.filters_to_be_applied.assistance_process = $scope.ap;
+        }
+
+        if($scope.st!="-1"){
+            $scope.filters_to_be_applied.status = $scope.st;
+        }else{
+            delete $scope.filters_to_be_applied.status;
+        }
+
+        if($scope.ind!="-1"){
+            $scope.filters_to_be_applied.internal_department = $scope.ind;
+        }else{
+            delete $scope.filters_to_be_applied.internal_department;
+        }
+
+        if($scope.at!="-1"){
+            $scope.filters_to_be_applied.assigned_to = $scope.at;
+        }
+        else{
+            delete $scope.filters_to_be_applied.assigned_to;
+        }
+
+        if($scope.email!=null && $scope.email!="")
+        {
+            $scope.filters_to_be_applied.email = $scope.email
+        }
+        else
+        {
+            delete $scope.filters_to_be_applied.email;
+
+        }
+        
+        if($scope.ticket_owner!=null && $scope.ticket_owner!="")
+        {
+            $scope.filters_to_be_applied.ticket_owner = $scope.ticket_owner
+        }
+
+        if($scope.account_number!=null && $scope.account_number!="")
+        {
+            $scope.filters_to_be_applied.account_number = $scope.account_number
+        }
+        var filter_data = 'myData='+JSON.stringify($scope.filters_to_be_applied);
+        serviceApi.filter_tickets(filter_data).then(function(response){
+            // $scope.tickets=response.data;
+            // console.log(response.data);
+            
+            $state.go('Ticket',{'tickets_data':response.data,'filters_to_be_applied':$scope.filters_to_be_applied});
+        },function(response){
+
+        });
+    }
     
 });
 app.controller("newticketController",function($scope,FileUploader,$rootScope,serviceApi,$state){

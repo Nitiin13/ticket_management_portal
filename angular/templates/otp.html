@@ -3,7 +3,7 @@
     <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone mdl-cell--8-col-tablet">
       <div class="otp"> 
         <div id="otp_mail"><b>Enter the 6-digit code we mailed you on your email {{display_email}}</b></div>
-        <span ng-if="show_error" id="error_message">OTP entered by You is either expired or wrong! Please try again</span>
+        <!-- <span ng-if="show_error" id="error_message">OTP entered by You is either expired or wrong! Please try again</span> -->
         <form>
         <div class="otp_view">
           
@@ -30,7 +30,7 @@
         </div>
         <div class="otp_footer_below">
             <div>
-                <a ui-sref="SignUp">Back to login page</a>
+                <a ui-sref="Home">Back to login page</a>
             </div>
             <div>
                 Don't have an account? <a ui-sref="SignUp">Sign up</a>

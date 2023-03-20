@@ -136,7 +136,8 @@
                     $myObj = new stdClass();
 
                     $myObj->success = 1;
-                    $myObj->data =null;
+                    $myObj->data = new stdClass();
+                    $myObj->data->userid = $data['id'];
                     
                     $myJSON = json_encode($myObj);
                     echo $myJSON;
@@ -323,8 +324,62 @@
          'ses_email'=>$user_email,
          'ses_name'=>$user_name,
          'ses_role'=>$user_role);
-      $this->session->set_userdata($session_array);
-         return $session_array;
+        $this->session->set_userdata($session_array);
+        return $session_array;
+      
+    }
+    public function start_Session_signup()
+    {
+        if($_POST['myData']){
+            $myData = json_decode($_POST['myData']);
+            $user_id = $myData->userid;
+            if($user_id){
+                $myObj = new stdClass();
+
+                $myObj->success = 1;
+                $myObj->data = new stdClass();
+                $user_array=$this->auth_model->getUserDetails($user_id);
+                foreach($user_array as $user)
+                {
+                    $user_id=$user['user_id'];
+                    $myObj->data->user_id = $user_id;
+                    $user_email=$user['email'];
+                    $myObj->data->user_email= $user_email;
+                    $user_role=$user['role'];
+                    $myObj->data->user_role = $user_role;
+                    $user_name=$user['name'];
+                    $myObj->data->user_name = $user_name;
+                }
+                $session_array=array(
+                   'ses_id'=>$user_id,
+                   'ses_email'=>$user_email,
+                   'ses_name'=>$user_name,
+                   'ses_role'=>$user_role
+                );
+                $this->session->set_userdata($session_array);
+                
+                $myJSON = json_encode($myObj);
+                echo $myJSON;
+            }
+            else{
+                $myObj = new stdClass();
+
+                $myObj->success = 0;
+                $myObj->data = null;
+
+                $myJSON = json_encode($myObj);
+                echo $myJSON;
+            }
+        }
+        else{
+            $myObj = new stdClass();
+
+            $myObj->success = 0;
+            $myObj->data = null;
+
+            $myJSON = json_encode($myObj);
+            echo $myJSON;
+        }
       
     }
     function logout()
