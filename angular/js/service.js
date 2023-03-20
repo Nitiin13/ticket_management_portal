@@ -95,6 +95,14 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
         });
         return status;
     }
+    serviceApi.addTicket=function(data){
+        var ticket=$http({
+            method:'POST',
+            url:baseUrl+'user/add_Ticket',
+            headers:{'Content-Type':'application/x-www-form-urlencoded'},
+            data:data
+        });
+        return ticket;
     serviceApi.filter_tickets=function(data)
     {
         var filter=$http({
@@ -116,4 +124,4 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
         return populate;
     }
     return serviceApi;}
-    );
+});

@@ -1,10 +1,23 @@
-var app=angular.module("myApp", ["ui.router","ServiceModule","angularModalService"]);
+var app=angular.module("myApp", ["ui.router","ServiceModule","angularFileUpload","angularModalService"]);
+app.directive("ckeditor", [function(){
+    return {
+        restrict: "A",
+        link: function (scope, elem, attrs) {
+            CKEDITOR.replace(elem[0], {
+                autoParagraph:false,
+                
+                // configuration
+            });
+        }
+    }
+}]);
 app.run(function ($rootScope,$timeout,$window) {
     $rootScope.session=$window.session;
-                    $rootScope.isLoggedIn=null;
-                    $rootScope.userid=$window.user;
+                    // $rootScope.isLoggedIn=null;
+                    $rootScope.userid=$window.userid;
                     $rootScope.role=$window.user_role;
-                    $rootScope.name=$window.user_name;
+                    $rootScope.loggedname=$window.user_name;
+                    $rootScope.loggedemail=$window.user_email;
     $rootScope.$on('$viewContentLoaded', ()=> {
       $timeout(() => {
         componentHandler.upgradeAllRegistered();
@@ -29,7 +42,13 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
         url:'/signup',
         templateUrl:'angular/templates/signup.html',
         controller:'signupController'
-    }).state('Ticket',{
+    }).state('NewTicket',{
+        url:'/newticket',
+        templateUrl:'angular/templates/newTicket.html',
+        controller:'newticketController'
+    }
+
+    ).state('Ticket',{
         url:'/ticket/:userid',
         templateUrl:'angular/templates/dashboard_view.html',
         controller:'ticketController',
@@ -420,7 +439,7 @@ app.controller('logoutController',function($scope,serviceApi,$rootScope,$state,$
                 $window.session='0';
                 $rootScope.session=$window.session;
                 
-                $rootScope.isLoggedIn=null;
+                // $rootScope.isLoggedIn=null;
                $rootScope.userid=null;
                 $state.go('Home');
             }
@@ -436,7 +455,8 @@ app.controller('logoutController',function($scope,serviceApi,$rootScope,$state,$
 });
 app.controller('loginController',function($scope,serviceApi,$rootScope,$window,$state){
 
-if(($rootScope.session!='0' && $rootScope.session!=undefined && $rootScope.session!=null)|| ($rootScope.isLoggedIn!=null && $rootScope.isLoggedIn!=undefined))
+// if(($rootScope.session!='0' && $rootScope.session!=undefined && $rootScope.session!=null)|| ($rootScope.isLoggedIn!=null && $rootScope.isLoggedIn!=undefined))
+if($rootScope.session!='0' && $rootScope.session!=undefined && $rootScope.session!=null)
 {
     $rootScope.userid=$window.userid;
     // $rootScope.role=$window.user_role;
@@ -457,7 +477,7 @@ if(($rootScope.session!='0' && $rootScope.session!=undefined && $rootScope.sessi
 }
 else{
     // $rootScope.session='0';
-    $rootScope.isLoggedIn = null;
+    // $rootScope.isLoggedIn = null;
     $scope.present=false;
     $scope.req_error=false;
     $scope.rememberme=false;
@@ -487,11 +507,11 @@ else{
                 {
                     user_info=response.data;
                     $rootScope.session='1';
-                    $rootScope.isLoggedIn=true;
+                    // $rootScope.isLoggedIn=true;
                     $rootScope.userid=user_info['user_id'];
                     $rootScope.role=user_info['role'];
-                
-                    $rootScope.name=user_info['name'];
+                    $rootScope.loggedemail=user_info['email'];
+                    $rootScope.loggedname=user_info['name'];
                    var a={
                     'userid':$rootScope.userid
                    }
@@ -528,8 +548,12 @@ else{
 }});
 app.controller("ticketController",function($scope,tickets,$rootScope,$state,$window,serviceApi,ModalService,$stateParams){
    
-    if($rootScope.session!='0' || $rootScope.isLoggedIn!=null)
+    // if($rootScope.session!='0' || $rootScope.isLoggedIn!=null)
+    if($rootScope.session!='0')
     {
+        $scope.navigate=function(){
+            $state.go('NewTicket');
+        }
         $scope.it='-1';
         $scope.keyword = null;
         console.log('logged in');
@@ -901,3 +925,106 @@ app.controller('filterModalController',function($scope,serviceApi,populate_data,
     }
     
 });
+app.controller("newticketController",function($scope,FileUploader,$rootScope,serviceApi,$state){
+    $scope.reqerror=false;
+    $scope.subject='';
+$scope.accountno='';
+$scope.data='';
+$scope.attachments=false;
+    var uploader = $scope.uploader = new FileUploader({
+        url:'http://localhost/TMS/user/user_image_upload/?ticketid=',
+        formData:""
+    });
+  
+uploader.filters.push({
+    name: 'imageFilter',
+    fn: function(item /*{File|FileLikeObject}*/, options) {
+        
+        var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+        return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1 && item.size  <= 41943040;}});
+// 
+
+
+uploader.onAfterAddingAll = function(addedFileItems) {
+    // console.log("upload",addedFileItems);
+    // console.info('onAfterAddingAll', addedFileItems);
+    
+    $scope.files=addedFileItems;
+    if($scope.files.length>0)
+    {
+        $scope.attachments=true;
+    }
+    else{
+        
+        $scope.attachments=false;
+    }
+
+}
+
+
+$scope.discard=function(){
+    $scope.subject='';
+    $scope.reqerror=false;
+    uploader.clearQueue();
+    CKEDITOR.instances.editor1.setData( '<p></p>');
+    
+}
+$scope.Getforminfo=function(){
+    $scope.desc=CKEDITOR.instances.editor1.getData();
+    if($scope.subject!='' && $scope.desc!='')
+    {
+    subject=$scope.subject;
+    accountno=$scope.accountno;
+    description=$scope.desc;
+    var formdata={
+        'subject':subject,
+        'accountno':accountno,
+        'description':description,
+        'attachments':$scope.attachments
+    }
+    console.log(formdata);
+   
+   
+    
+    var ticket_data = 'myData3='+JSON.stringify(formdata);
+    serviceApi.addTicket(ticket_data).then(function(response){
+        if(response.data['error']==false)
+        {
+            $scope.ticket_id=response.data['ticket_id'];
+            formData={
+                'ticketid':$scope.ticket_id,
+            }
+            uploader['formData']=JSON.stringify(formData);
+            console.log(uploader);
+           
+        
+        
+        uploader.onBeforeUploadItem = function(item){
+            console.log(item);
+            item.url='http://localhost/TMS/user/user_image_upload/?ticketid='+$scope.ticket_id;
+            
+        }
+       
+        uploader.uploadAll();
+             
+        $state.go('Ticket',{'userid':$rootScope.userid});    
+        
+         
+        
+        }
+        else if(response.data['error']==true){
+            var snackbarContainer = document.querySelector('#demo-toast-example');
+            var data = {message: 'Failed to add ticket'};
+            snackbarContainer.MaterialSnackbar.showSnackbar(data);
+        }
+    
+    
+    },function(response){
+    
+    });
+}
+else{
+    $scope.reqerror=true;
+uploader.clearQueue();
+}
+}});

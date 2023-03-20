@@ -22,7 +22,7 @@
         $ses_id=$this->session->userdata("ses_id");
         $ses_role=$this->session->userdata("ses_role");
         $ses_name=$this->session->userdata("ses_name");
-            
+         $ses_email=$this->session->userdata("ses_email");   
             // $is_login=$this->input->cookie("login",true);
             $id_auth=$this->input->cookie("login",true);
             $token=$this->input->cookie($id_auth,true);
@@ -49,10 +49,11 @@
                     //   var_dump($a);
                       $role=$a["ses_role"];
                         $name=$a["ses_name"];
-                      
+                        $email=$a['ses_email'];
                       $data['user']=$u_id; 
                       $data['role']=$role;
                       $data['name']=$name;
+                      $data['email']=$email;
                         $data['session']='1';
                         // var_dump()
                     }
@@ -61,6 +62,7 @@
                         $data['session']='0';
                         $data['role']=null;
                         $data['name']=null;
+                        $data['email']=null;
                     }
             }
             else 
@@ -71,6 +73,7 @@
                 $data['role']=$ses_role;
                 $data['name']=$ses_name;
              $data['session']='1';
+             $data['email']=$ses_email;
           
             }
             else{
@@ -78,6 +81,7 @@
             $data['session']='0';
             $data['role']=null;
             $data['name']=null;
+            $data['email']=null;
             }
         }
         $this->load->view('index',$data);

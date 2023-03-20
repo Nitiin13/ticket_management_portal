@@ -5,7 +5,9 @@
     --dark-color:#212121;
     --green-primary:#71D28E;
     --disabled-text-color:#9B9B9B;
+    --font-style:'Open Sans', sans-serif;
   }
+
 
 #login-div{
     /* margin-top:130px;

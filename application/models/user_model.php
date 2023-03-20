@@ -177,4 +177,37 @@ class User_model extends CI_Model
          return false;
       }
    }
+   public function add_new_ticket($subject,$desc,$accno,$userid)
+   {
+      $data=array(
+         'subject'=>$subject,
+         'description'=>$desc,
+         'account_number'=>$accno,
+         'user_id'=>$userid
+      );
+     $query=$this->db->insert('tickets',$data);
+      if($query)
+      {
+         return $this->db->insert_id();
+      }
+      else{
+         return false;
+      }
+   }
+   public function upload_image($ticketid,$type,$image)
+   {
+      $data=array(
+         'ref_id'=>$ticketid,
+         'type'=>$type,
+         'attachment'=>$image
+      );
+      $query=$this->db->insert('attachment',$data);
+      if($query)
+      {
+         return true;
+      }
+      else{
+         return false;
+      }
+   }
 }
