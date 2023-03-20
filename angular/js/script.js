@@ -49,10 +49,11 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
     }
 
     ).state('Ticket',{
-        url:'/ticket/:userid',
+        url:'/ticket',
         templateUrl:'angular/templates/dashboard_view.html',
         controller:'ticketController',
         params: {
+            userid:null,
             tickets_data:null,
             filters_to_be_applied:null
         },
@@ -518,7 +519,7 @@ else{
                    console.log(a);
                     $state.go('Ticket',a);
                 
-                }
+                }   
                 else if(response.data['error']==true)
                 {
                     $scope.req_error=false;

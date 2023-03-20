@@ -24,11 +24,11 @@
               <span class="mdl-textfield__error">Password should be minimum 8 charchters</span>
             </div>
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" ng-class="{'is-invalid':password!=re_password}">
-              <input class="mdl-textfield__input" type="password" id="pass_conf" ng-model="re_password" ng-required="re_password">
+              <input class="mdl-textfield__input" type="password" id="pass_conf" ng-model="re_password" ng-required="re_password">      
               <label class="mdl-textfield__label" for="pass_conf">Confirm Password</label>
               <!-- <span class="mdl-textfield__error">Input is not a valid charchter!</span> -->
               <span  ng-if="password!=re_password"class="mdl-textfield__error">Password Does Not Match</span>
-              <span class="mdl-button mdl-js-button mdl-button--icon mdl-textfield__label__icon"><i class="material-icons" ng-click="show_conf_password()" id="password_icon">visibility_off</i></span>
+              <span class="mdl-button mdl-js-button mdl-button--icon mdl-textfield__label__icon"><i class="material-icons" ng-click="show_conf_password()" id="password_icon_conf">visibility_off</i></span>
             </div>
       </div>
       <div class="signup_footer">
