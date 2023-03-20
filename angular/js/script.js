@@ -417,7 +417,7 @@ app.controller('resetpasswordController', function($scope,$stateParams,$window,s
                             if(response.data.success==1)
                             {
                                 $rootScope.session='1';
-                                $rootScope.isLoggedIn=true;
+                                // $rootScope.isLoggedIn=true;
                                 $rootScope.userid=response.data.data.user_id;
                                 $rootScope.role=response.data.data.user_role;
                                 $rootScope.name=response.data.data.user_name;
@@ -654,7 +654,9 @@ app.controller("ticketController",function($scope,tickets,$rootScope,$state,$win
                     serviceApi.update_status(update_data).then(function(response){
                         if(response.data==1)
                         {
-                            alert('updated');
+                            var snackbarContainer = document.querySelector('#demo-toast-example');
+                            var data = {message: 'Updated'};
+                            snackbarContainer.MaterialSnackbar.showSnackbar(data);
                         }
                     },function(response){
 
@@ -783,6 +785,9 @@ app.controller('filterModalController',function($scope,serviceApi,populate_data,
         $scope.st = "-1";
         $scope.ind = "-1";
         $scope.at = "-1";
+        $scope.email='';
+        $scope.account_number='';
+        $scope.ticket_owner='';
         
     }
 
