@@ -103,6 +103,7 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
             data:data
         });
         return ticket;
+    }
     serviceApi.filter_tickets=function(data)
     {
         var filter=$http({
@@ -124,4 +125,4 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
         return populate;
     }
     return serviceApi;}
-});
+);

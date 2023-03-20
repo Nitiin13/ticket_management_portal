@@ -965,6 +965,7 @@ uploader.onAfterAddingAll = function(addedFileItems) {
 $scope.discard=function(){
     $scope.subject='';
     $scope.reqerror=false;
+    $scope.accountno='';
     uploader.clearQueue();
     CKEDITOR.instances.editor1.setData( '<p></p>');
     
