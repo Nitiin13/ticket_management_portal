@@ -1,0 +1,99 @@
+<div class="modal fade filter-modal-main">
+    <div class="modal-dialog">
+      <div class="modal-content filter-modal-content">
+        <div class="modal-header filter-modal-header">
+            <b id="filter_text">Filters</b>
+          <button class="mdl-button mdl-js-button">
+            <i class="material-icons">
+                close
+            </i>
+         </button> 
+        </div>
+        <div>
+            <p class="filter-applied">No filters appiled</p>
+        </div>
+        <form ng-model="formdata">
+            <div class="modal-body filter-body">
+                
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text" id="ticket_owner" ng-model="ticket_owner">
+                    <label class="mdl-textfield__label" for="ticket_owner">Ticket Owner</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text" id="account_number" ng-model="account_number">
+                    <label class="mdl-textfield__label" for="pass">Account Number</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="email" id="email" ng-model="email" ng-required="email" ng-focus="email_error=false">
+                    <label class="mdl-textfield__label" for="email">Email</label>
+                    <span class="mdl-textfield__error">Enter a Valid Email!</span>
+                </div>
+                <div>
+                    <select  class="mdl-textfield__input" id="option_placeholder" ng-model="at">
+                        <!-- ng-options="item as item.name for item in items" -->
+                        <option disabled selected value="-1">Assigned to</option>
+                        <option ng-repeat='a in assigned_to' value="{{a.user_id}}">{{a.name}}</option>
+                    </select>
+                </div>
+                <div>
+                    <select  class="mdl-textfield__input" id="option_placeholder" ng-model="ind">
+                        <!-- ng-options="item as item.name for item in items" -->
+                        <option disabled selected value="-1" >Internal Department</option>
+                        <option ng-repeat='i in internal_department' value="{{i.id}}">{{i.name}}</option>
+                    </select>
+                </div>
+                <div>
+                    <select  class="mdl-textfield__input" id="option_placeholder" ng-model="st">
+                        <!-- ng-options="item as item.name for item in items" -->
+                        <option disabled selected value="-1">Status</option>
+                        <option ng-repeat='s in status' value="{{s.id}}">{{s.name}}</option>
+                    </select>
+                </div>
+                <div>
+                    <select  class="mdl-textfield__input" id="option_placeholder" ng-model="ap">
+                        <!-- ng-options="item as item.name for item in items" -->
+                        <option disabled selected value="-1">Assistance process</option>
+                        <option ng-repeat='a in assistance_process' value="{{a.id}}">{{a.name}}</option>
+                    </select>
+                </div>
+                <div>
+                    <select  class="mdl-textfield__input" id="option_placeholder" ng-model="pr">
+                        <!-- ng-options="item as item.name for item in items" -->
+                        <option disabled selected value="-1">Priority</option>
+                        <option ng-repeat='p in priority' value="{{p.id}}">{{p.name}}</option>
+                    </select>
+                </div>
+                <div>
+                    <select  class="mdl-textfield__input" id="option_placeholder">
+                        <!-- ng-options="item as item.name for item in items" -->
+                        <option disabled selected >Time Frame</option>
+                        <option >Option1</option>
+                        <option >Option2</option>
+                        <option >Option3</option>
+                    </select>
+                </div>
+                <!-- <div>
+                    <select  class="mdl-textfield__input" id="option_placeholder">
+                        ng-options="item as item.name for item in items"
+                        <option disabled selected >Ticket Owner</option>
+                        <option >Option1</option>
+                        <option >Option2</option>
+                        <option >Option3</option>
+                    </select>
+                </div> -->
+                
+            </div>
+            <div class="modal-footer filter-modal-footer">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="apply_filters" ng-click="submitfilter()">
+                    Apply Filters
+                </button>
+                <!-- Raised button with ripple -->
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="discard_filters" ng-click="discardfilter()">
+                    Discard
+                </button>
+                
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>

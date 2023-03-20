@@ -59,6 +59,11 @@ background-color:  var(--primary);
 color:var(--secondary);
 letter-spacing: 0px;
 }
+a{
+    text-decoration: none;
+    font-family: inherit;
+    color: #4275F4;
+}
 #rm-span{
     text-align: left;
 

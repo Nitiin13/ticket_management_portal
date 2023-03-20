@@ -152,7 +152,7 @@ line-height: 22px;
 }
 #sort_menu{
     width:224px;
-    height: 129px;
+    height: 180px;
 }
 #disabled_option{
     color:var(--disabled-text-color);
@@ -238,3 +238,6 @@ line-height: 22px;
    
 
 }
+
+/*-----------------Filter modal CSS---------------------------------*/
+
