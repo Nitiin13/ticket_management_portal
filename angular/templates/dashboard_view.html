@@ -57,17 +57,26 @@
          
       </div>
       <div class="filters_actions" ng-if="admin">
-        <button class="mdl-button mdl-js-button" id="filter_button">
+        <button class="mdl-button mdl-js-button" id="filter_button" ng-click="filtermodal()">
           <i class="material-icons">filter_list</i>
           Filters
          </button>  
+         <!-- <div id="myModal" class="modal"> -->
+
+          <!-- Modal content -->
+          <!-- <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Some text in the Modal..</p>
+          </div>
+        
+        </div> -->
          <button class="mdl-button mdl-js-button" id="sort_button">
           <i class="material-icons">sort</i>
           Sort By
          </button> 
          <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-left" for="sort_button" id="sort_menu" ng-model="sort" >
           <li class="mdl-menu__item" id="disabled_option">SORT BY</li>
-          <li class="mdl-menu__item" ng-repeat='item in sort' value="{{item.id}}">{{item.name}}</li>
+          <li class="mdl-menu__item" ng-repeat='item in sort' value="{{item.id}}" ng-click="sortby(item.id)">{{item.name}}</li>
         </ul>
          </div>
          <div id="s_box">
@@ -78,15 +87,15 @@
                           </span>
               </div>
               <div class="mdl-textfield mdl-js-textfield"  id="search_bar">
-                <input class="mdl-textfield__input" type="text" name="search" id="search">
-                <label class="mdl-textfield__label" id="search_text"for="search">Search by ticket name or ID</label>
+                <input class="mdl-textfield__input" type="text" name="search" id="search" ng-model="keyword" ng-keydown="$event.keyCode === 13 && search(keyword)">
+                <label class="mdl-textfield__label" id="search_text" for="search" >Search by ticket name or ID</label>
             </div>
            
           </div>
           <div ng-if="!admin"class="drop_down_status">
-          <select  class="mdl-textfield__input">
-            <!-- ng-options="item as item.name for item in items" -->
-            <option>Select status</option>
+            <select  class="mdl-textfield__input" ng-model="it" ng-change="status_filter(it)">
+              <!-- ng-options="item as item.name for item in items" -->
+              <option value="-1" disabled selected>Select status</option>
             <option ng-repeat='item in items' value="{{item.id}}">{{item.name}}</option>
           </select>
         </div>
@@ -115,8 +124,7 @@
         </div>
         </div>
       <div class="ttable">
-    
-      <table  class="mdl-data-table mdl-js-data-table mdl-data-table mdl-shadow--2dp">
+      <table class="mdl-data-table mdl-js-data-table mdl-data-table mdl-shadow--2dp">
         <thead>
          
           <tr>
@@ -133,7 +141,6 @@
         <tbody>
         
           <tr ng-if="tickets" ng-repeat='i in tickets'>
-            
             <td><label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="{{i.ticket_id}}">
               <input type="checkbox" id="{{i.ticket_id}}"  ng-model="checkbox" value="{{i.ticket_id}}" class="mdl-checkbox__input" ng-change="getChecked(checkbox,i.ticket_id)" ></td>
             <td>{{ i.ticket_id }}</td>

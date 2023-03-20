@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "angular-modal-service": "^0.15.6"
+  }
+}

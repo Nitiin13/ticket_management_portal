@@ -1,4 +1,4 @@
-Signup
+Signup // 2 story points
     Frontend
         View : Signup.html
             Onform Submit
@@ -24,7 +24,7 @@ Signup
                             redirect to tickets page // register_user Frontend controller of Frontend will do this using state.go
                         if false :
                             show error message
-=======================================================================================                
+================================================================================================================
 Signup AND Login
 
 check_email(email): // auth modal method
@@ -45,8 +45,16 @@ get_user_details(id,email)://auth_modal
 
 check_session(user_id) //backend controller
     get user details(id) //  auth_modal method
-========================================================================================
-Login 
+===============================================================================================================
+for remeber me  check
+    while loading index file 
+        check for session set if not set 
+        check for cookies uid token
+        if cookies there getuserdetails(uid)
+        set session for that user
+
+================================================================================================================
+Login 2.25 story point
     Frontend
         View : login.html
         valid email format
@@ -56,7 +64,7 @@ Login
                         If true : 
                             Show error message
                         if false : 
-                            Api call auth_controller login_method(data) and pass data  
+                            Api call auth_controller login_method(data) and pass data including remember me flag
                                 check_email($email) method of the auth_controller // if it exists
                                 if true
                                     check_cred(email,password) // check the credentials entered by the user in auth modal
@@ -67,14 +75,15 @@ Login
                                             custom_token_genrator_helper()
                                             set cookie in browser
                                             insert into user_tokens
+                                            //api
                                     go to login_ctrl
                                 if false
                                     show error
                     go to tickets page //state.go(tickets)
 
-=========================================================================================
-
-Login -> Forgot Password
+=============================================================================================================================
+        2.25 points
+Login -> Forgot Password 
     Frontend
         view : forgot_password.html
         forgot_password ctrl
@@ -116,8 +125,8 @@ Login -> Forgot Password
                     if false:
                         show captcha error
 
-=========================================================================================
-
+=============================================================================================================================
+    1.5 spoints
 forgot_password -> otp_view
     frontend
         view:otp_view.html
@@ -145,8 +154,9 @@ forgot_password -> otp_view
                         return true
                         call hook send_mail_with_otp(u_id,email) // line 89-105
 
-===========================================================================================================================================
 
+============================================================================================
+1.25 spoints
 otp_view -> reset_password
     view:reset_password.html
         validation feildsa are not empty
