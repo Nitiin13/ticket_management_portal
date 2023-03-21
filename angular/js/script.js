@@ -67,15 +67,16 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
                     'userid':$stateParams.userid
                  }
                  var postData2 = 'myData1='+JSON.stringify(data1);
-                 console.log(postData2);
-                //  console.log($stateParams.userid);
-           
+                
+           return serviceApi.getTickets(postData2);
       
-            return serviceApi.getTickets(postData2);
+       
                
                
         }]}
-    }).state('logout',{
+
+    })
+    .state('logout',{
         url:'/home',
         templateUrl:'angular/templates/login.html',
         // controller:'logoutController'
@@ -124,8 +125,8 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
                 
                 
          }]}
-    })
-});
+        })});
+
 app.controller('testController',function($scope){
     
 var snackbarContainer = document.getElementById('demo-snackbar-example');

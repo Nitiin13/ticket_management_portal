@@ -33,7 +33,8 @@
 .mdl-textfield__label__icon {
     position: absolute;
     right: 10px;
-    top: 20px;
+    top: 10px;
+    
     opacity: 1;
  }
  .mdl-textfield{

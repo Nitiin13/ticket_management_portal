@@ -242,9 +242,12 @@ line-height: 22px;
     align-items: baseline;
     margin-left: 35px;
 }
+.large_screen_only{
+    display: contents;
+  }
 
 
-@media only screen and (max-width: 391px){
+@media only screen and (max-width: 500px){
     
   .large_screen_only{
     display: none;

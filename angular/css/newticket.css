@@ -30,7 +30,12 @@
 }
 #desc{
      margin-top:24px;
-}
+     font-size: 20px;
+     font-weight: bold;
+     line-height: 27px;
+     font-family: var(--font-style);
+     opacity: 1;
+     color:var(--dark-color);}
 .ticket_form{
     margin-top: 48px;
     width: 742px;
@@ -102,7 +107,7 @@ opacity: 1;
 #uploadIcon{
     color:#000000;
 }
-@media only screen and (max-width: 391px){
+@media only screen and (max-width:786px){
     
  .common_container{
     margin: 35px auto auto auto;

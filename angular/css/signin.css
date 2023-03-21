@@ -107,7 +107,7 @@ opacity: 1;
     color: var(--dark-color);
      opacity: 1;
 }
-@media only screen and (max-width: 391px){
+@media only screen and (max-width:786px){
     
     
     #login-div{
