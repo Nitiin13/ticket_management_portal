@@ -177,20 +177,50 @@ class User_model extends CI_Model
          return false;
       }
    }
-   public function add_new_ticket($subject,$desc,$accno,$userid)
+   public function add_new_ticket($subject,$desc,$userid,$tags)
    {
       $data=array(
          'subject'=>$subject,
          'description'=>$desc,
-         'account_number'=>$accno,
+         // 'account_number'=>$accno,
          'user_id'=>$userid
       );
-     $query=$this->db->insert('tickets',$data);
+      $query=$this->db->insert('tickets',$data);
       if($query)
       {
-         return $this->db->insert_id();
+         $ticket_id = $this->db->insert_id();
+         $this->addTags($ticket_id,$tags);
+         return $ticket_id;
       }
       else{
+         return false;
+      }
+   }
+   public function edit_ticket($ticket_id,$subject,$desc,$tags,$assigned,$status,$priority,$process,$date,$department,$delete_file)
+   {
+      $data=array(
+         'subject'=>$subject,
+         'description'=>$desc,
+         'status'=>$status,
+         'priority'=>$priority,
+         'assigned_to'=>$assigned,
+         'internal_department'=>$department,
+         'assistance_process'=>$process,
+         'duedate' =>$date
+      );
+      $this->db->set('updation_time', 'NOW()', false);
+      $this->db->where('ticket_id', $ticket_id);
+      $query=$this->db->update('tickets', $data);
+      if($query)
+      {
+         if (!empty($delete_file)) {
+            $this->db->where_in('attachment', $delete_file);
+            $this->db->update('attachment', array('is_deleted' => 1));
+         }
+         $this->updateTags($ticket_id, $tags);
+         return $ticket_id;
+         }
+         else{
          return false;
       }
    }
@@ -208,6 +238,52 @@ class User_model extends CI_Model
       }
       else{
          return false;
+      }
+   }
+   public function addTags($ticket_id,$tags){
+      foreach($tags as $tag) {
+         $data = array(
+            'tag_name'=>$tag
+         );
+         $sql = $this->db->insert_string('tags', $data);
+         $sql = str_replace('INSERT', 'INSERT IGNORE', $sql);
+         $query = $this->db->query($sql);
+         // $tagid = $this->db->insert_id();
+
+         $query = $this->db->get_where('tags', array('tag_name' => $tag));
+         if ($query->num_rows() == 1) {
+            $tagid = $query->row()->tagid;
+            $this->ticket_tag($ticket_id,$tagid);
+         }
+
+         // $query = $this->db->query("INSERT IGNORE INTO tags (tag_name) VALUES ('$data[tag_name]')");
+         // $query=$this->db->insert('tags',$data);
+      }
+   }
+   public function ticket_tag($ticket_id,$tag_id) {
+         $data = array(
+            'ticket_id' => $ticket_id,
+            'tagid' => $tag_id
+         );
+         $query = $this->db->insert('ticket_tags',$data);
+   }
+
+   public function updateTags($ticket_id, $tags) {
+      // First, delete all the existing tags associated with the ticket
+      $this->db->delete('ticket_tags', array('ticket_id' => $ticket_id));
+      foreach($tags as $tag) {
+         $data = array(
+            'tag_name'=>$tag
+         );
+         $sql = $this->db->insert_string('tags', $data);
+         $sql = str_replace('INSERT', 'INSERT IGNORE', $sql);
+         $query = $this->db->query($sql);
+    
+         $query = $this->db->get_where('tags', array('tag_name' => $tag));
+         if ($query->num_rows() == 1) {
+            $tagid = $query->row()->tagid;
+            $this->ticket_tag($ticket_id,$tagid);
+         };
       }
    }
 }

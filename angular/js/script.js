@@ -12,7 +12,7 @@ app.directive("ckeditor", [function(){
     }
 }]);
 app.run(function ($rootScope,$timeout,$window) {
-    $rootScope.session=$window.session;
+                    $rootScope.session=$window.session;
                     // $rootScope.isLoggedIn=null;
                     $rootScope.userid=$window.userid;
                     $rootScope.role=$window.user_role;
@@ -45,10 +45,14 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
     }).state('NewTicket',{
         url:'/newticket',
         templateUrl:'angular/templates/newTicket.html',
-        controller:'newticketController'
-    }
-
-    ).state('Ticket',{
+        controller:'newticketController',
+        // resolve:{
+        // tags: ['serviceApi', function(serviceApi){
+        //     return serviceApi.getTags();
+        // }]
+        // }
+    })
+    .state('Ticket',{
         url:'/ticket',
         templateUrl:'angular/templates/dashboard_view.html',
         controller:'ticketController',
@@ -71,8 +75,6 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
            return serviceApi.getTickets(postData2);
       
        
-               
-               
         }]}
 
     })
@@ -80,11 +82,13 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
         url:'/home',
         templateUrl:'angular/templates/login.html',
         // controller:'logoutController'
-    }).state('forgotpassword',{
+    })
+    .state('forgotpassword',{
         url:'/forgotpassword',
         templateUrl:'angular/templates/forgotpassword.html',
         controller:'forgotPasswordController'
-    }).state('otp',{
+    })
+    .state('otp',{
         url:'/otp',
         params: {
             email:null,
@@ -92,7 +96,8 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
         },
         templateUrl:'angular/templates/otp.html',
         controller:'otpController'
-    }).state('resetpassword',{
+    })
+    .state('resetpassword',{
         url:'/resetpassword',
         params: {
             email:null,
@@ -100,11 +105,13 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
         },
         templateUrl:'angular/templates/resetpassword.html',
         controller:'resetpasswordController'
-    }).state('test',{
+    })
+    .state('test',{
         url:'/test',
         templateUrl:'angular/templates/test.html',
         controller:'testController'
-    }).state('filter',{
+    })
+    .state('filter',{
         url:'/filter',
         templateUrl:'angular/templates/filter_modal.html',
         controller:'filterModalController',
@@ -112,7 +119,7 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
             filters_to_be_applied:null
         },
         resolve:{
-          
+         
             populate_data: ['serviceApi', function (serviceApi)  {
                  // $stateParams will contain any parameter defined in your url
                 // serviceApi.populate_filter().then(function(response){
@@ -125,7 +132,18 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
                 
                 
          }]}
-        })});
+    })
+    .state('editTicket', {
+        url:'/editticket',
+        templateUrl:'angular/templates/editTicket.html',
+        controller:'editticketController',
+    })
+    .state('viewTicket', {
+        url:'/viewticket',
+        templateUrl:'angular/templates/viewTicket.html',
+        controller:'viewticketController',
+    })
+});
 
 app.controller('testController',function($scope){
     
@@ -945,17 +963,305 @@ app.controller('filterModalController',function($scope,serviceApi,populate_data,
     }
     
 });
-app.controller("newticketController",function($scope,FileUploader,$rootScope,serviceApi,$state){
+app.controller("editticketController", function($scope, $http, FileUploader,$rootScope,$state, serviceApi){
+    if($rootScope.session!='0')
+    {
+        $scope.it='-1';
+        $scope.keyword = null;
+        console.log('logged in');
+        console.log($rootScope.role);
+        if($rootScope.role!="0"){
+            $rootScope.admin=true;
+        }
+        else{
+            $rootScope.admin=false;
+        }
+      }
+    
+    $scope.reqerror=false;
+    $scope.data='';
+    $scope.attachments=false;
+    $scope.selectedDate = null;
+    var uploader = $scope.uploader = new FileUploader({
+        url:'http://localhost/TMS/user/user_image_upload/?ticketid=',
+        formData:""
+    });
+    $scope.selectedDepartment = '';
+    $scope.selectedPriority = '';
+           
+        // DATE PICKER
+        flatpickr("#datepicker", {
+            minDate: "today"
+        });
+    $scope.getTags = function() {
+        $http ({
+            method: 'GET',
+            url: 'tags'
+        })
+        .then(function(response) {
+            $scope.tagItems = response.data;  
+        }, function(reason) {
+            $scope.error = reason.data;
+        })
+    }
+    $scope.getTicketInfo = function() {
+        $http ({
+            method: 'GET',
+            url: 'getticket'
+        })
+        .then(function(response) {
+            $scope.ticketInfo = response.data;
+            $scope.user = $scope.ticketInfo.users[0];
+            $scope.ticket_id = $scope.ticketInfo.ticket[0].ticket_id;
+            $scope.selectedAdmin = $scope.ticketInfo.ticket[0].assigned_to;
+            // DEPARTMENT
+            $scope.d_id = $scope.ticketInfo.ticket[0].internal_department;
+            for (var i = 0; i < $scope.ticketInfo.department.length; i++) {
+                if ($scope.ticketInfo.department[i].department_id === $scope.d_id) {
+                $scope.selectedDepartment = $scope.ticketInfo.department[i].department_id;
+                break;
+                }
+            }
+            // STATUS  
+            $scope.status_id = $scope.ticketInfo.ticket[0].status;
+            $scope.statusOption = [
+                { id: '0' , name: 'to be reviewed' },
+                { id: '1' , name: 'In progress' },
+                { id: '2' , name: 'on hold' },
+                { id: '3' , name:'resolved'},
+                { id: '4', name:'dropped'},
+                { id : '5', name:'resolved and closed'}
+            ];
+            for (var i = 0; i < $scope.statusOption.length; i++) {
+                if ($scope.statusOption[i].id === $scope.status_id) {
+                $scope.selectedStatus = $scope.statusOption[i].id;
+                break;
+                }
+            }
+            // ASSISTANCE PROCESS
+            $scope.process_id = $scope.ticketInfo.ticket[0].assistance_process;
+            $scope.assistantProcess = [
+                { id: '0', name: 'Tech Assistant' },
+                { id: '1', name: 'Finance Assistant' },
+                { id: '2', name: 'proces 3' }
+            ];
+            for (var i = 0; i < $scope.assistantProcess.length; i++) {
+                if ($scope.assistantProcess[i].id === $scope.process_id) {
+                $scope.selectedProcess = $scope.assistantProcess[i].id;
+                break;
+                }
+            }
+            // PRIORITY
+            $scope.priorityOption = [
+                { id: '0', name: 'none' },
+                { id: '1', name: 'Low' },
+                { id: '2', name: 'Medium' },
+                { id: '3', name: 'High' },
+            ];
+            $scope.priority_id = $scope.ticketInfo.ticket[0].priority;
+            for (var i = 0; i < $scope.priorityOption.length; i++) {
+                if ($scope.priorityOption[i].id === $scope.priority_id) {
+                $scope.selectedPriority = $scope.priorityOption[i].id;
+                break;
+                }
+            }
+            // DUE DATE
+            $scope.selectedDate = $scope.ticketInfo.ticket[0].duedate;
+            $scope.tagNames = $scope.ticketInfo.tags.map(function(tag) {
+                return tag.tag_name;
+            });
+            $scope.tagItems = []; // tag names from backend
+            $scope.tagId = []; // tag ID to send it to backend ticket_tags table
+            $scope.getTags();
+            $scope.files_original = $scope.ticketInfo.attachments.map(function(file) {
+                return file.attachment;
+            });
+        }, function(reason) {
+            $scope.error = reason.data;
+        })
+    }
+    $scope.getTicketInfo();
+        
+    // TAGS
+    $scope.addTag = function(tag) {
+      if ($scope.tagNames.indexOf(tag) == -1) {
+        if(!$scope.tagNames.includes(tag) && tag){
+            $scope.tagNames.push(tag);
+            console.log($scope.tagNames);
+        }
+      }
+      $scope.tag='';
+    }
+    const inputElement = document.getElementById("tag-input");
+    inputElement.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            $scope.addTag($scope.tag);
+        }
+    });
+    $scope.removeTag = function(tag) {
+      var index = $scope.tagNames.indexOf(tag);
+      if (index !== -1) {       
+        $scope.tagNames.splice(index, 1);      
+      }
+    }
+    // ATTACHMENTS
+    $scope.delete_files = [];
+    $scope.delete_file = function(file) {
+            if(!$scope.delete_files.includes(file) && file){
+                $scope.delete_files.push(file);
+            }
+            var index = $scope.files_original.indexOf(file);
+            if (index !== -1) {       
+              $scope.files_original.splice(index, 1);     
+            }
+    }
+    uploader.filters.push({
+        name: 'imageFilter',
+        fn: function(item /*{File|FileLikeObject}*/, options) {
+            
+            var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+            return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1 && item.size  <= 41943040;}});
+    
+    uploader.onAfterAddingAll = function(addedFileItems) {
+        $scope.files=addedFileItems;
+        if($scope.files.length>0)
+        {
+            $scope.attachments=true;
+        }
+        else{
+            
+            $scope.attachments=false;
+        }
+    }
+    $scope.Getforminfo=function(){
+        $scope.desc=CKEDITOR.instances.editor1.getData();
+        if($scope.subject!='' && $scope.desc!='')
+        {
+        subject=$scope.ticketInfo.ticket[0].subject;
+        description=$scope.desc;
+        var formdata={
+            'ticketid': $scope.ticket_id,
+            'subject':subject,
+            'description':description,
+            'attachments':$scope.attachments,
+            'tags' : $scope.tagNames,
+            'assigned' : $scope.selectedAdmin,
+            'department': $scope.selectedDepartment,
+            'status' : $scope.selectedStatus,
+            'priority' : $scope.selectedPriority,
+            'process' : $scope.selectedProcess,
+            'duedate' : $scope.selectedDate,
+            'delete_file' : $scope.delete_files
+        }
+        console.log(formdata);
+        
+        var ticket_data = 'myData3='+JSON.stringify(formdata);
+        serviceApi.editTicket(ticket_data).then(function(response){
+            if(response.data['error']==false)
+            {
+                // $scope.ticket_id=response.data['ticket_id'];
+                formdata={
+                    'ticketid':$scope.ticket_id,
+                }
+                if (uploader.queue.length > 0) {
+                uploader['formData']=JSON.stringify(formdata);
+                console.log($scope.ticket_id);
+                console.log(uploader);       
+            
+            uploader.onBeforeUploadItem = function(item){
+                console.log(item);
+                // console.log($scope.ticket_id);
+                item.url='http://localhost/TMS/user/user_image_upload/?ticketid='+$scope.ticket_id;               
+            }          
+            uploader.uploadAll();    }
+            else {            
+            $state.go('Ticket',{'userid':$rootScope.userid});              
+            }
+            }
+            else if(response.data['error']==true){
+                var snackbarContainer = document.querySelector('#demo-toast-example');
+                var data = {message: 'Failed to edit ticket'};
+                snackbarContainer.MaterialSnackbar.showSnackbar(data);
+            }       
+        },function(response){
+        
+        });
+    }
+    else{
+        $scope.reqerror=true;
+        uploader.clearQueue();
+    }
+    }
+
+});
+app.controller("newticketController",function($scope,FileUploader,$rootScope,serviceApi,$state,$http){
     $scope.reqerror=false;
     $scope.subject='';
-$scope.accountno='';
+// $scope.accountno='';
 $scope.data='';
 $scope.attachments=false;
     var uploader = $scope.uploader = new FileUploader({
         url:'http://localhost/TMS/user/user_image_upload/?ticketid=',
         formData:""
     });
-  
+    // $scope.getTags = function() {
+    //     serviceApi.getTags()
+    //     .then(function(tagItems) {
+    //         $scope.tagItems = tagItems;
+    //         console.log($scope.tagItems);   
+    //     }, function(error) {
+    //         $scope.error = error;
+    //     });
+    // };
+    $scope.tagNames = []; // tag name what user has entered
+    $scope.tagItems = []; // tag names from backend
+    
+    $scope.tagId = []; // tag ID to send it to backend ticket_tags table
+    $scope.getTags = function() {
+        $http ({
+            method: 'GET',
+            url: 'tags'
+        })
+        .then(function(response) {
+            $scope.tagItems = response.data;
+            console.log($scope.tagItems);   
+        }, function(reason) {
+            $scope.error = reason.data;
+        })
+    }
+    $scope.getTags();
+
+    $scope.addTag = function(tag) {
+      if ($scope.tagNames.indexOf(tag) == -1) {
+        if(!$scope.tagNames.includes(tag)){
+            $scope.tagNames.push(tag);
+            console.log($scope.tagNames);
+            // console.log($scope.tagItems);
+            // $scope.tagId.push(tag.tagid);
+            // console.log($scope.tagId);
+        }
+      }
+      $scope.tag='';
+    }
+    const inputElement = document.getElementById("tag-input");
+    inputElement.addEventListener("keydown", function(event) {
+        // check if the "enter" key was pressed    
+        if (event.key === "Enter") {
+            $scope.addTag($scope.tag);
+            // console.log("Enter key was pressed!");
+        }
+    });
+    
+    $scope.removeTag = function(tag) {
+      var index = $scope.tagNames.indexOf(tag);
+      if (index !== -1) {       
+        $scope.tagNames.splice(index, 1);
+        $scope.tagId.splice(index, 1);
+        console.log($scope.tagId);       
+      }
+    }
+
+
 uploader.filters.push({
     name: 'imageFilter',
     fn: function(item /*{File|FileLikeObject}*/, options) {
@@ -985,7 +1291,7 @@ uploader.onAfterAddingAll = function(addedFileItems) {
 $scope.discard=function(){
     $scope.subject='';
     $scope.reqerror=false;
-    $scope.accountno='';
+    // $scope.accountno='';
     uploader.clearQueue();
     CKEDITOR.instances.editor1.setData( '<p></p>');
     
@@ -995,13 +1301,15 @@ $scope.Getforminfo=function(){
     if($scope.subject!='' && $scope.desc!='')
     {
     subject=$scope.subject;
-    accountno=$scope.accountno;
+    // accountno=$scope.accountno;
     description=$scope.desc;
     var formdata={
         'subject':subject,
-        'accountno':accountno,
+        // 'accountno':accountno,
         'description':description,
-        'attachments':$scope.attachments
+        'attachments':$scope.attachments,
+        'tags' : $scope.tagNames
+        // 'tags' : $scope.tagId
     }
     console.log(formdata);
    
@@ -1012,10 +1320,10 @@ $scope.Getforminfo=function(){
         if(response.data['error']==false)
         {
             $scope.ticket_id=response.data['ticket_id'];
-            formData={
+            formdata={
                 'ticketid':$scope.ticket_id,
             }
-            uploader['formData']=JSON.stringify(formData);
+            uploader['formData']=JSON.stringify(formdata);
             console.log(uploader);
            
         
@@ -1049,3 +1357,155 @@ else{
 uploader.clearQueue();
 }
 }});
+app.controller("viewticketController",function($scope,$http,FileUploader) {
+        // $scope.selectedDate = null;   
+        // DATE PICKER
+        flatpickr("#datepicker", {
+            minDate: "today"
+        });
+    $scope.statusOption = [
+        { id: '0' , name: 'to be reviewed' },
+        { id: '1' , name: 'In progress' },
+        { id: '2' , name: 'on hold' },
+        { id: '3' , name:'resolved'},
+        { id: '4', name:'dropped'},
+        { id : '5', name:'resolved and closed'}
+    ];
+    $scope.assistantProcess = [
+        { id: '0', name: 'Tech Assistant' },
+        { id: '1', name: 'Finance Assistant' },
+        { id: '2', name: 'proces 3' }
+    ];
+    $scope.priorityOption = [
+        { id: '0', name: 'none' },
+        { id: '1', name: 'Low' },
+        { id: '2', name: 'Medium' },
+        { id: '3', name: 'High' },
+    ];
+    $scope.getTicketInfo = function() {
+        $http ({
+            method: 'GET',
+            url: 'getticket'
+        })
+        .then(function(response) {
+            $scope.ticketInfo = response.data;
+            $scope.user = $scope.ticketInfo.users[0];
+            $scope.ticket_id = $scope.ticketInfo.ticket[0].ticket_id;
+            if($scope.ticketInfo.feedback.length > 0) {
+                $scope.feedback = 'TRUE';
+            }
+            // ASSIGNED TO
+            $scope.selectedAdmin = $scope.ticketInfo.ticket[0].assigned_to;
+            $scope.adminName = $scope.ticketInfo.admin.find(admin => admin.user_id === $scope.selectedAdmin).name;
+            // DEPARTMENT
+            $scope.d_id = $scope.ticketInfo.ticket[0].internal_department;
+            for (var i = 0; i < $scope.ticketInfo.department.length; i++) {
+                if ($scope.ticketInfo.department[i].department_id === $scope.d_id) {
+                $scope.selectedDepartment = $scope.ticketInfo.department[i].department_id;
+                break;
+                }
+            }
+            // STATUS  
+            $scope.status_id = $scope.ticketInfo.ticket[0].status;
+            for (var i = 0; i < $scope.statusOption.length; i++) {
+                if ($scope.statusOption[i].id === $scope.status_id) {
+                $scope.selectedStatus = $scope.statusOption[i].id;
+                break;
+                }
+            }
+            // ASSISTANCE PROCESS
+            $scope.process_id = $scope.ticketInfo.ticket[0].assistance_process;
+            for (var i = 0; i < $scope.assistantProcess.length; i++) {
+                if ($scope.assistantProcess[i].id === $scope.process_id) {
+                $scope.selectedProcess = $scope.assistantProcess[i].id;
+                break;
+                }
+            }
+            // PRIORITY
+            $scope.priority_id = $scope.ticketInfo.ticket[0].priority;
+            for (var i = 0; i < $scope.priorityOption.length; i++) {
+                if ($scope.priorityOption[i].id === $scope.priority_id) {
+                $scope.selectedPriority = $scope.priorityOption[i].id;
+                break;
+                }
+            }
+            // DUE DATE
+            $scope.selectedDate = $scope.ticketInfo.ticket[0].duedate;
+            // TAGS
+            $scope.tagNames = $scope.ticketInfo.tags.map(function(tag) {
+                return tag.tag_name;
+            });;
+            // ATTACHMENTS
+            $scope.files = $scope.ticketInfo.attachments.map(function(file) {
+                return file.attachment;
+            });
+        }, function(reason) {
+            $scope.error = reason.data;
+        })
+    }
+    $scope.getTicketInfo();
+    $scope.updateTicketStatus = function() {
+        var data = {
+            status: $scope.selectedStatus,
+            ticketId: $scope.ticket_id
+        };
+        $http.post('getticket/updatestatus',data)
+            .then(function(response) {
+                swal({
+                    title: "Ticket Status Updated!",
+                    text: "The ticket status has been updated successfully.",
+                    icon: "success",
+
+                });
+            }, function(error) {
+                swal({
+                    title: "Error",
+                    text: "An error occurred while updating the ticket status.",
+                    icon: "error",
+                });
+            });
+    }
+    $scope.updatepriority = function() {
+        var data = {
+            priority: $scope.selectedPriority,
+            ticketId: $scope.ticket_id
+        };
+        $http.post('getticket/updatepriority',data)
+            .then(function(response) {
+                swal({
+                    title: "Ticket Priority Updated!",
+                    text: "The ticket Priority has been updated successfully.",
+                    icon: "success",
+
+                });
+            }, function(error) {
+                swal({
+                    title: "Error",
+                    text: "An error occurred while updating the ticket priority.",
+                    icon: "error",
+                });
+            });
+    }
+    $scope.updateduedate = function() {
+        var data = {
+            duedate: $scope.selectedDate,
+            ticketId: $scope.ticket_id
+        };
+        $http.post('getticket/updateduedate',data)
+            .then(function(response) {
+                swal({
+                        title: "Ticket Due Date Updated!",
+                        text: "The ticket Due Date has been updated successfully.",
+                        icon: "success",
+
+                    });
+            }, function(error) {
+                swal({
+                        title: "Error",
+                        text: "An error occurred while updating the ticket Due Date.",
+                        icon: "error",
+                    });
+            });
+    }
+       
+});

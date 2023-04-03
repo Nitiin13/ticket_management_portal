@@ -46,26 +46,27 @@
       $myData=json_decode($_POST["myData3"]);
       $subject=$myData->subject;
       $desc=$myData->description;
-      $accno=$myData->accountno;
+      // $accno=$myData->accountno;
       $userid=$this->session->userdata("ses_id");
       $attachment=$myData->attachments;
+      $tags=$myData->tags;
       if($subject!='' && $desc!='')
       {
       if($attachment==false)
       {
-        $ticket_id=$this->user_model->add_new_ticket($subject,$desc,$accno,$userid);
-    if($ticket_id)
-      {
-         $add_status=array('error'=>false);
-         $this->output->set_content_type('application/json')->set_output(json_encode($add_status)); 
+        $ticket_id=$this->user_model->add_new_ticket($subject,$desc,$userid,$tags);
+         if($ticket_id)
+         {
+            $add_status=array('error'=>false);
+            $this->output->set_content_type('application/json')->set_output(json_encode($add_status)); 
+         }
+         else{
+            $add_status=array('error'=>true);
+            $this->output->set_content_type('application/json')->set_output(json_encode($add_status)); 
+         }  
       }
       else{
-         $add_status=array('error'=>true);
-         $this->output->set_content_type('application/json')->set_output(json_encode($add_status)); 
-      }  
-      }
-      else{
-         $ticket_id=$this->user_model->add_new_ticket($subject,$desc,$accno,$userid);
+         $ticket_id=$this->user_model->add_new_ticket($subject,$desc,$userid,$tags);
          if($ticket_id)
          {
          
@@ -83,14 +84,58 @@
       $add_status=array('error'=>true);
             $this->output->set_content_type('application/json')->set_output(json_encode($add_status));
    }
-      
+}
+    public function edit_Ticket()
+    { 
+      $myData=json_decode($_POST["myData3"]);
+      $ticketid=$myData->ticketid;
+      $subject=$myData->subject;
+      $desc=$myData->description;
+      $attachment=$myData->attachments;
+      $tags=$myData->tags;
+      $assigned=$myData->assigned;
+      $department=$myData->department;
+      $status=$myData->status;
+      $priority=$myData->priority;
+      $process=$myData->process;
+      $duedate=$myData->duedate;
+      $delete_file=$myData->delete_file;
 
-            
-    
+      if($subject!='' && $desc!='')
+      {
+      if($attachment==false)
+      {
+        $ticket_id=$this->user_model->edit_ticket($ticketid,$subject,$desc,$tags,$assigned,$status,$priority,$process,$duedate,$department,$delete_file);
+         if($ticket_id)
+         {
+            $add_status=array('error'=>false);
+            $this->output->set_content_type('application/json')->set_output(json_encode($add_status)); 
+         }
+         else{
+            $add_status=array('error'=>true);
+            $this->output->set_content_type('application/json')->set_output(json_encode($add_status)); 
+         }  
+      }
+      else{
+         $ticket_id=$this->user_model->edit_ticket($ticketid,$subject,$desc,$tags,$assigned,$status,$priority,$process,$duedate,$department,$delete_file);
+         if($ticket_id)
+         {        
+            $add_status=array('ticket_id'=>$ticket_id,'error'=>false);         
+            $this->output->set_content_type('application/json')->set_output(json_encode($add_status)); 
+         }
+         else{
+            $add_status=array('error'=>true);
+            $this->output->set_content_type('application/json')->set_output(json_encode($add_status)); 
+         } 
+      }
    }
+   else{
+      $add_status=array('error'=>true);
+            $this->output->set_content_type('application/json')->set_output(json_encode($add_status));
+   }
+}
    public function user_image_upload()
 { 
-  
 
    if($_GET['ticketid'])
    {

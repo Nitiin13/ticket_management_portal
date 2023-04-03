@@ -55,6 +55,15 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
         
     //     return request;
     // }
+    serviceApi.getTags = function() {
+        return $http({
+            method: 'GET',
+            url: 'tags'
+        })
+        .then(function(response) {
+            return response.data;
+        });
+    };
     serviceApi.checkLogin=function(data){
         var request =$http({
             method:'POST',
@@ -104,6 +113,24 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
         });
         return ticket;
     }
+    serviceApi.editTicket=function(data){
+        var ticket=$http({
+            method:'POST',
+            url:baseUrl+'user/edit_Ticket',
+            headers:{'Content-Type':'application/x-www-form-urlencoded'},
+            data:data
+        });
+        return ticket;
+    }
+    serviceApi.updateTicketStatut=function(data){
+        var status=$http({
+            method:'POST',
+            url:baseUrl+'/getticket/updatetstatus',
+            headers:{'Content-Type':'application/x-www-form-urlencoded'},
+            data:data
+        });
+        return status;
+    }
     serviceApi.filter_tickets=function(data)
     {
         var filter=$http({
@@ -126,3 +153,11 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
     }
     return serviceApi;}
 );
+serviceModule.service('tagService', function($http) {
+    this.getTags = function() {
+      return $http ({
+        method: 'GET',
+        url: 'tags'
+      });
+    }
+});

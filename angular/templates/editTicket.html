@@ -1,0 +1,158 @@
+<div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone">
+        <div class="common_container">
+            <div class="page_desc">
+                <span>Ticket/<span id="page_link">Edit Ticket</span></span>
+                <span id="desc">Ticket information</span>
+            </div>
+            <div class="ticket_form">
+                <form name="ticketform"  enctype="multipart/form-data" >
+                    <div class="pre_filled_info">
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="tktextfield">
+                        <input class="mdl-textfield__input" type="text" id="cname" ng-model="user.name"  disabled>
+                        <label class="mdl-textfield__label" for="cname">Contact Name</label>
+                      </div>
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  id="Actextfield">
+                        <input class="mdl-textfield__input" type="text" id="accountno" ng-model="user.user_id" disabled>
+                        <label class="mdl-textfield__label" for="accountno">Account Number</label>
+                      </div>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  id="tktextfield">
+                        <input class="mdl-textfield__input" type="text" id="email" ng-model="user.email" disabled>
+                        <label class="mdl-textfield__label" for="email">Email</label>
+                    </div>
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  id="subtextfield">
+                        <input class="mdl-textfield__input"  ng-model="ticketInfo.ticket[0].subject" type="text" id="subject" name="subject" required
+                        >
+                        <label class="mdl-textfield__label" for="subject">Subject*</label>
+                        <span class="mdl-textfield__error" ng-if="reqerror">Subject is Mandatory</span>
+                      </div>
+                      <!-- Assigned To -->
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <select class="mdl-textfield__input" name="admin" ng-model="selectedAdmin" style="width:50%">
+                          <option ng-repeat="admin in ticketInfo.admin" value="{{admin.user_id}}">{{admin.name}}</option>
+                        </select>
+                        <label class="mdl-textfield__label">Assigned to</label>
+                      </div>
+                      <!-- Internal Department -->
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <select class="mdl-textfield__input" name="department" ng-model="selectedDepartment" style="width:50%">
+                          <option ng-repeat="department in ticketInfo.department" value="{{department.department_id}}">{{department.department_name}}</option>
+                        </select>
+                        <label class="mdl-textfield__label">Internal Department</label>
+                      </div>
+                      <!-- Discription -->
+                      <label class="discription" for="editor1">Discription</label>
+                      <div class="editor1">
+                        <textarea name="editor1" id="editor1" rows="10" cols="80" ng-model="ticketInfo.ticket[0].description"  ckeditor  required>
+                        </textarea>
+                      </div>                   
+                    <span  id='field_errors'style="color:red;" ng-show="reqerror">Description is Mandatory</span>
+                    
+                    <div style="width: 100%;margin: 18px 0;">
+                      <!-- Status -->
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:49%">
+                        <select class="mdl-textfield__input" name="status" ng-model="selectedStatus"  style="width:80%">
+                          <option ng-repeat="status in statusOption" value="{{status.id}}">{{status.name}}</option>
+                        </select>
+                        <label class="mdl-textfield__label">Status</label>
+                      </div>
+                      <!-- Assistant Process -->
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  style="width:49%">
+                        <select class="mdl-textfield__input" name="Assistant" ng-model="selectedProcess"  style="width:80%">
+                          <option ng-repeat="process in assistantProcess" value="{{process.id}}">{{process.name}}</option>
+                        </select>
+                        <label class="mdl-textfield__label">Assistant Process</label>
+                      </div>
+                    </div>
+                    <div class="page_desc" style="margin: 8px 0;">
+                      <span id="desc">Additional information</span>
+                    </div>
+                    <div style="width: 100%;">
+                    <!-- Due Date -->
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:49%">
+                        <input class="mdl-textfield__input" type="text" id="datepicker" style="width:80%" ng-model="selectedDate" readonly>
+                        <label class="mdl-textfield__label" for="datepicker">Due Date</label>
+                      </div>
+                    <!-- Priority -->
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  style="width:49%">
+                      <select class="mdl-textfield__input" name="Assistant" ng-model="selectedPriority" style="width:80%">
+                        <option ng-repeat="priority in priorityOption" value="{{priority.id}}">{{priority.name}}</option>
+                      </select>
+                      <label class="mdl-textfield__label">Priority</label>
+                    </div>
+                    </div>
+                    <!--      TAGS      -->
+                    <div class="chip-div">
+                      <div class="mdl-chip  mdl-chip--deletable" ng-repeat="tagName in tagNames">
+                        <span class="mdl-chip__text">{{tagName}}</span>
+                        <button class="mdl-chip__action" >
+                          <i class="material-icons" ng-click="removeTag(tagName)">cancel</i>
+                        </button>
+                      </div>
+                    </div>
+              
+                    <div class="mdl-textfield mdl-js-textfield getmdl-select">
+                      <input class="mdl-textfield__input" type="text" id="tag-input" ng-model="tag"  ng-keydown="onEnterKey($event,tag)" autocomplete="off">
+                      <label class="mdl-textfield__label" for="tag-input">Add a tag...</label>
+                      <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu" for="tag-input">
+                        
+                     <li class="mdl-menu__item" ng-repeat="item in tagItems | filter: tag" ng-click="addTag(item.tag_name)">{{item.tag_name}}</li>
+
+                      </ul>                     
+                    </div>                       
+                      
+                    <!-- ATTACHMENT -->
+                    <div class="attachment_section">                                          
+                        <label class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file">
+                            <i id="uploadIcon"class="material-icons">attach_file</i><input name="file"  type="file" nv-file-select="" uploader="uploader" multiple style="display:none" id="uploadBtn">
+                        </label>
+                            <span><span id="attach_info">Add Attachment(s)</span>Up to 40MB</span>
+                    </div>
+                    <table ng-if="files_original" class="table">
+                      <thead></thead>  
+                      <tbody>
+                          <tr ng-repeat="file in files_original">
+                              <td><strong>{{ file }}</strong></td>
+                              <td nowrap>
+                                <label class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" ng-click="delete_file(file)">
+                                  <i id="uploadIcon"class="material-icons">delete</i>
+                                </label>                    
+                              </td>
+                          </tr>
+                      </tbody>
+                    </table>
+                    <table ng-if="uploader.queue!=0" class="table">
+                      <thead></thead>  
+                      <tbody>
+                          <tr ng-repeat="item in uploader.queue">
+                              <td><strong>{{ item.file.name }}</strong></td>
+                              <td nowrap>
+                                <label class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" ng-click="item.remove()">
+                                  <i id="uploadIcon"class="material-icons">delete</i>
+                                </label>                    
+                              </td>
+                          </tr>
+                      </tbody>
+                    </table>
+                    </form>
+                    <div id="demo-toast-example" class="mdl-js-snackbar mdl-snackbar">
+                      <div class="mdl-snackbar__text"></div>
+                      <button class="mdl-snackbar__action" type="button"></button>
+                    </div>
+                    </div>                 
+            </div>
+          
+
+        </div>
+    </div>
+      <footer class="form_actions">
+            <div class="common_section">
+              <button class="mdl-button mdl-js-button mdl-button--raised" id="sbt-primary" ng-click="Getforminfo()">
+                    Submit
+              </button>
+              <button class="mdl-button mdl-js-button mdl-button--raised" id="discard-primary" ng-click="discard()">
+                    Discard
+              </button>
+            </div>
+      </footer>

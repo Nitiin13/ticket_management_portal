@@ -1,0 +1,104 @@
+<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+<!--      SIDE MENU       -->
+<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
+      <div class="demo-drawer mdl-layout__drawer view_ticket_sidemenu">
+        <nav class="demo-navigation mdl-navigation">
+          <a href="ticket" class="mdl-navigation__link back_button" style="color: #212121;padding: 0;"><i class="material-icons back_button">arrow_back_ios</i>Back</a>
+          <span class="sidemenu_text view_ticket_heading">Ticket Properties</span>
+          <span class="sidemenu_contact">CONTACT INFO</span>
+          <span class="view_ticket_heading">Almashines Technologies Clients</span>
+          <span class="sidemenu_email">clients@almashines.com</span>
+          <div class="sidemenu_ticketInfo">
+            <!-- Status -->
+            <div class="view_ticketInfo_sidemenu">
+              <p class="view_ticket_heading">Status</p>
+              <select class="mdl-textfield__input view_ticket_dropdown" name="status" ng-model="selectedStatus" ng-change="updateTicketStatus()">
+                <option ng-repeat="status in statusOption" value="{{status.id}}">{{status.name}}</option>
+              </select>
+            </div>       
+            <!-- Due date -->
+            <div class="view_ticketInfo_sidemenu">
+              <p class="view_ticket_heading">Due date</p>
+              <input class="mdl-textfield__input" type="text" id="datepicker" ng-model="selectedDate" ng-change="updateduedate()">
+            </div>
+            <!-- Priority -->
+            <div class="view_ticketInfo_sidemenu">
+              <p class="view_ticket_heading">Priority</p>
+              <select class="mdl-textfield__input view_ticket_dropdown" name="Assistant" ng-model="selectedPriority" ng-change="updatepriority()">
+                <option ng-repeat="priority in priorityOption" value="{{priority.id}}">{{priority.name}}</option>
+              </select>
+            </div>
+            <!-- Assigned To -->
+            <div class="view_ticketInfo_sidemenu">
+              <p class="view_ticket_heading">Assigned To</p>
+                <p class="side_menu_content">{{adminName}}</p>
+            </div>
+            <!--      TAGS      -->
+            <div class="view_ticketInfo_sidemenu">
+              <p class="view_ticket_heading">Tags</p>
+              <div class="mdl-chip  mdl-chip--deletable" ng-repeat="tagName in tagNames">
+                <span class="mdl-chip__text">{{tagName}}</span>
+              </div>
+            </div>            
+          </div> <!-- ticketInfo div closed -->
+        </nav>
+      </div>  
+</div>
+<!--      TICKET INFORMATION      -->
+<main class="mdl-layout__content">
+  <div class="mdl-grid demo-content  view_ticket_main">
+    <!-- <div class="mdl-grid"> -->
+      <!-- <div class="mdl-cell mdl-cell--2-col"></div> -->
+      <div class="mdl-cell mdl-cell--12-col mdl-title view_ticket_header">
+        <div class="view_ticket_subject">
+          <p class="mdl-title-text ticket_subject" style="display: inline-block; vertical-align: middle;">{{ticketInfo.ticket[0].subject}}</p><br>
+          <span class="ticket_id" ng-model="ticket_id">#{{ticket_id}}</span>
+          <span class="created-date">Created on: {{ticketInfo.ticket[0].genration_time}}</span>
+        </div>
+        <div class="view_ticket_button">
+          <div class="reply_button">
+            <a class="mdl-button mdl-js-button reply_button_content"><i class="material-icons reply_button_content">reply</i>Reply</a>
+          </div>
+          <div class="menu_icon">
+          <button id="menu" class="mdl-button mdl-js-button mdl-button--icon edit_delete_ticket">
+            <i class="material-icons">more_horiz</i>
+          </button>
+          <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="menu">
+            <li class="mdl-menu__item"><a ui-sref="editTicket">Edit Ticket</a></li>
+            <li class="mdl-menu__item">Delete Ticket</li>
+          </ul>
+        </div>
+        </div>
+        <!-- </div> -->
+      </div>
+      <!--        FEEDBACK       --><!--  ng-if="feedback" -->
+      <div class="view_ticket_feedback" ng-if="feedback">
+        <p>User has submitted feedback</p>
+        <a class="mdl-button mdl-js-button feedback_button">View Feedback</a>
+      </div>
+      <!--        ATTACHMENTS        -->
+      <div class="view_ticket_attachments">
+        <table ng-if="files" class="table">
+          <thead></thead>  
+          <tbody>
+              <tr class="view_attachment" ng-repeat="file in files">
+                <td><i id="uploadIcon"class="material-icons">attach_file</i></td>
+                  <td class="view_ticket_heading">{{ file }}</td>
+                  <td>
+                    <a href="uploads/{{ file }}" target="_blank" download>Download
+                    </a>                                       
+                  </td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="view_ticket_description">
+        <p ng-model="ticketInfo.ticket[0].description">{{ticketInfo.ticket[0].description}}</p>
+      </div>
+      <div class="view_reply"  ng-if="!reply">
+        <p class="view_ticket_heading">No past conversations available</p>
+      </div>
+      <!-- <div class="view_reply" ng-if="reply">REPLY BODY HERE</div> -->
+    <!-- </div> -->
+  </div>
+</main>

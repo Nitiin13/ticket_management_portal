@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "angular-modal-service": "^0.15.6"
+    "@angular-mdl/datepicker": "^15.0.0",
+    "angular-file-upload": "^2.6.1",
+    "angular-modal-service": "^0.15.6",
+    "moment": "^2.29.4",
+    "sweetalert": "^2.1.2"
   }
 }

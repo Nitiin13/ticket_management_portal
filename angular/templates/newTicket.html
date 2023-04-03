@@ -8,57 +8,71 @@
             <div class="ticket_form">
                 <form name="ticketform"  enctype="multipart/form-data" >
                     <div class="pre_filled_info">
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="tktextfield">
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="tktextfield">
                         <input class="mdl-textfield__input" type="text" id="cname" ng-model="loggedname"  disabled>
                         <label class="mdl-textfield__label" for="cname">Contact Name</label>
                       </div>
                       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  id="Actextfield">
-                        <input class="mdl-textfield__input" type="text" id="accountno" ng-model="accountno" >
+                        <input class="mdl-textfield__input" type="text" id="accountno" ng-model="userid" disabled>
                         <label class="mdl-textfield__label" for="accountno">Account Number</label>
                       </div>
                     </div>
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  id="tktextfield">
                         <input class="mdl-textfield__input" type="text" id="email" ng-model="loggedemail" disabled>
                         <label class="mdl-textfield__label" for="email">Email</label>
-                      </div>
-                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  id="subtextfield">
-                        <input class="mdl-textfield__input" type="text" id="subject" name="subject" ng-model="subject" required
-                        >
-                        <label class="mdl-textfield__label" for="subject">Subject*</label>
-                        <span class="mdl-textfield__error" ng-if="reqerror">Subject is Mandatory</span>
-                      </div>
-                      <div class="editor1">
-                      <textarea name="editor1" id="editor1" rows="10" cols="80" ng-model="data"  ckeditor  required>
-                    
                     </div>
-                    </textarea>
-                    <span  id='field_errors'style="color:red" ng-show="reqerror">Description is Mandatory</span>
-
-                    <div class="attachment_section">
-                      
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  id="subtextfield">
+                      <input class="mdl-textfield__input" type="text" id="subject" name="subject" ng-model="subject" required>
+                      <label class="mdl-textfield__label" for="subject">Subject*</label>
+                       <span class="mdl-textfield__error" ng-if="reqerror">Subject is Mandatory</span>
+                    </div>
+                    <label class="discription" for="editor1">Discription</label>
+                    <div class="editor1">
+                      <textarea name="editor1" id="editor1" rows="10" cols="80" ng-model="data"  ckeditor  required>
+                      </textarea>
+                    </div>                   
+                    <span  id='field_errors'style="color:red;" ng-show="reqerror">Description is Mandatory</span>
+                    <!--      TAGS      -->
+                    <div class="chip-div">
+                      <div class="mdl-chip  mdl-chip--deletable" ng-repeat="tagName in tagNames">
+                        <span class="mdl-chip__text">{{tagName}}</span>
+                        <button class="mdl-chip__action" >
+                          <i class="material-icons" ng-click="removeTag(tagName)">cancel</i>
+                        </button>
+                      </div>
+                    </div>
+              
+                    <div class="mdl-textfield mdl-js-textfield getmdl-select">
+                      <input class="mdl-textfield__input" type="text" id="tag-input" ng-model="tag"  ng-keydown="onEnterKey($event,tag)" autocomplete="off">
+                      <label class="mdl-textfield__label" for="tag-input">Add a tag...</label>
+                      <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu" for="tag-input">
                         
-                    
+                     <li class="mdl-menu__item" ng-repeat="item in tagItems | filter: tag" ng-click="addTag(item.tag_name)">{{item.tag_name}}</li>
+
+                      </ul>                     
+                    </div>       
+        
+                    <!-- ATTACHMENT -->
+                    <div class="attachment_section">                                          
                         <label class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file">
-                            <i id="uploadIcon"class="material-icons">attach_file</i><input name="file"  type="file" nv-file-select="" uploader="uploader" multiple style="display:none" id="uploadBtn">
+                        <i id="uploadIcon"class="material-icons">attach_file</i><input name="file"  type="file" nv-file-select="" uploader="uploader" multiple style="display:none" id="uploadBtn">
                         </label>
-                            <span><span id="attach_info">Add Attachment(s)</span>Up to 40MB</span>
+                        <span><span id="attach_info">Add Attachment(s)</span>Up to 40MB</span>
                     </div>
                     <table ng-if="uploader.queue!=0" class="table">
-                      <thead></thead>
-                     
+                      <thead></thead>  
                       <tbody>
                           <tr ng-repeat="item in uploader.queue">
                               <td><strong>{{ item.file.name }}</strong></td>
                               <td nowrap>
                                 <label class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" ng-click="item.remove()">
                                   <i id="uploadIcon"class="material-icons">delete</i>
-                              </label>
-                        
+                                </label>                    
                               </td>
                           </tr>
                       </tbody>
-                  </table>
-                    </form>
+                    </table>
+                  </form>
                     <div id="demo-toast-example" class="mdl-js-snackbar mdl-snackbar">
                       <div class="mdl-snackbar__text"></div>
                       <button class="mdl-snackbar__action" type="button"></button>
@@ -71,14 +85,13 @@
 
         </div>
     </div>
-       <footer class="form_actions">
-                <div class="common_section">
-                <button class="mdl-button mdl-js-button mdl-button--raised" id="sbt-primary" ng-click="Getforminfo()">
+      <footer class="form_actions">
+            <div class="common_section">
+              <button class="mdl-button mdl-js-button mdl-button--raised" id="sbt-primary" ng-click="Getforminfo()">
                     Submit
-                  </button>
-                  <button class="mdl-button mdl-js-button mdl-button--raised" id="discard-primary" ng-click="discard()">
+              </button>
+              <button class="mdl-button mdl-js-button mdl-button--raised" id="discard-primary" ng-click="discard()">
                     Discard
-                  </button>
-                </div>
-                </footer>
-                
+              </button>
+            </div>
+      </footer>
