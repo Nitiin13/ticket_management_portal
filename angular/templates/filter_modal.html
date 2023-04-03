@@ -1,9 +1,10 @@
+<div id="modal-container">
 <div class="modal fade filter-modal-main">
     <div class="modal-dialog">
       <div class="modal-content filter-modal-content">
         <div class="modal-header filter-modal-header">
             <b id="filter_text">Filters</b>
-          <button class="mdl-button mdl-js-button">
+        <button class="mdl-button mdl-js-button " ng-click="dismissModal()">
             <i class="material-icons">
                 close
             </i>
@@ -32,14 +33,14 @@
                     <select  class="mdl-textfield__input" id="option_placeholder" ng-model="at">
                         <!-- ng-options="item as item.name for item in items" -->
                         <option disabled selected value="-1">Assigned to</option>
-                        <option ng-repeat='a in assigned_to' value="{{a.user_id}}">{{a.name}}</option>
+                        <option ng-repeat='a in AssignedTo' value="{{a.user_id}}">{{a.name}}</option>
                     </select>
                 </div>
                 <div>
                     <select  class="mdl-textfield__input" id="option_placeholder" ng-model="ind">
                         <!-- ng-options="item as item.name for item in items" -->
                         <option disabled selected value="-1" >Internal Department</option>
-                        <option ng-repeat='i in internal_department' value="{{i.id}}">{{i.name}}</option>
+                        <option ng-repeat='i in department' value="{{i.department_id}}">{{i.department_name}}</option>
                     </select>
                 </div>
                 <div>
@@ -72,6 +73,12 @@
                         <option >Option3</option>
                     </select>
                 </div>
+                <div>
+                    <select  class="mdl-textfield__input" id="option_placeholder" ng-model="tg">
+                        <option disabled selected value="-1">Tag</option>
+                        <option ng-repeat='a in tag' value="{{a.tagid}}">{{a.tag_name}}</option>
+                    </select>
+                </div>
                 <!-- <div>
                     <select  class="mdl-textfield__input" id="option_placeholder">
                         ng-options="item as item.name for item in items"
@@ -97,3 +104,4 @@
       </div>
     </div>
   </div>
+</div>

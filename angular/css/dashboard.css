@@ -1,0 +1,78 @@
+.dashboard{
+    background: #F4F2F7 0% 0% no-repeat padding-box;
+    opacity: 1;
+}
+.dashboard-header h3 {
+    font-weight: 900;
+    font-size: 1.8rem;
+}
+.day_filter_outer{
+    margin: 84px 0px 0px -131px;
+    background-color: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+.day_filter_innner{
+    position: relative;
+    font-weight: 600;
+    font-size: 18px;
+    font-family: 'OpenSans',sans-serif;
+    letter-spacing: 0px;
+    color: #212121;
+    opacity: 1;
+    line-height: 22px;
+    margin-left:10px;
+}
+.card-container{
+    display: flex;
+    margin: 50px 89px 0px 89px;
+}
+#card{
+    width: 234px;
+    min-height: 0px;
+    height: 124px;
+    margin: 2px 56px 5px 5px;
+}
+#card p{
+    font: normal normal 600 14px/24px Open Sans;
+    font-size: 19px;
+    margin: 0px;
+}
+.graph{
+    display: flex;
+}
+.inner-graph{
+    display: flex;
+    margin: 60px 359px 4px 88px;
+    width: 29rem;
+    flex-direction: column;
+}
+.inner-fro{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.inner-fro p{
+    font-weight: 700;
+    font-size: 20px;
+}
+.graph-filter{
+    background-color: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    margin: 0px -178px 22px 0px;
+}
+.graph_filter_inner{
+    position: relative;
+    font-weight: 600;
+    font-size: 18px;
+    font-family: 'OpenSans',sans-serif;
+    letter-spacing: 0px;
+    color: #212121;
+    opacity: 1;
+    line-height: 22px;
+    margin-left:10px;
+}
+#graph-card{
+    width:145%;
+}

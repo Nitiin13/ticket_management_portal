@@ -69,7 +69,6 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
         var  logoutrequest=$http({
             method: 'POST',
             url: baseUrl+'auth/logout',
-           
         });
         return logoutrequest;           
     }
@@ -78,7 +77,7 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
         var ticketrequest=$http({
             method:'POST',
             url: baseUrl+'user/getTickets',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            headers: {'Content-Type': 'application/json'},
             data:data
         });
         return ticketrequest;
@@ -114,6 +113,89 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
 
         });
         return filter;
+    }
+    // serviceApi.filter_tickets_open_close=function(data)
+    // {
+    //     var filter=$http({
+    //         method:'POST',
+    //         url:'ticket/filter_ticket_open_close',
+    //         headers: {'Content-Type': 'application/json'},
+    //         data:data
+
+    //     });
+    //     return filter;
+    // }
+    serviceApi.getFilterData=function()
+    {
+        var filter=$http({
+            method:'POST',
+            url:'ticket/getFilterData',
+            headers: {'Content-Type': 'application/json'},
+        });
+        return filter;
+    }
+    serviceApi.getDashboardData=function()
+    {
+        var filter=$http({
+            method:'GET',
+            url:'ticket/getDashboardData',
+            headers: {'Content-Type': 'application/json'},
+        });
+        return filter;
+    }
+    serviceApi.getLineGraphData=function()
+    {
+        var filter=$http({
+            method:'GET',
+            url:'ticket/getLineGraphData',
+            headers: {'Content-Type': 'application/json'},
+        });
+        return filter;
+    }
+    serviceApi.getBarGraphData=function()
+    {
+        var filter=$http({
+            method:'GET',
+            url:'ticket/getBarGraphData',
+            headers: {'Content-Type': 'application/json'},
+        });
+        return filter;
+    }
+    serviceApi.getDashboardFilterData=function(data)
+    {
+        var filter=$http({
+            method:'POST',
+            url:'ticket/getDashboardFilterData',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data:data
+        });
+        return filter;
+    }
+    serviceApi.getLineGraphFilterData=function(data)
+    {
+        var filter=$http({
+            method:'POST',
+            url:'ticket/getLineGraphFilterData',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data:data
+        });
+        return filter;
+    }
+    serviceApi.getBarGraphFilterData=function(data)
+    {
+        var filter=$http({
+            method:'POST',
+            url:'ticket/getBarGraphFilterData',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data:data
+        });
+        return filter;
+    }
+    serviceApi.table_toExcel=function(id){
+            var data = id;
+            var excelFile = XLSX.utils.table_to_book(data, {sheet: "sheet1"});
+            XLSX.write(excelFile, { bookType: 'xlsx', bookSST: true, type: 'base64' });
+            XLSX.writeFile(excelFile, 'ExportedFile:TicketTableToExcel.' +"xlsx");
     }
     serviceApi.populate_filter=function()
     {

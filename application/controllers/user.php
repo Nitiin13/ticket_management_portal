@@ -8,20 +8,23 @@
     }
     public function getTickets()
     {
-      $myData = json_decode($_POST["myData1"]);
-      $userid = $myData->userid;
+      $_POST = json_decode(file_get_contents("php://input"), true);
+      $limit=$_POST['limit'];
+      $stream=$_POST['stream'];
       $role=$this->session->userdata("ses_role");
      if($role=="0")
      {
-      $tickets= $this->user_model->getTickets($userid);
+      $userid = $_POST['userid'];
+      $tickets= $this->user_model->getTickets($userid,$limit,$stream);
    
      }
      else{
       $userid=false;
-      $tickets=$this->user_model->getTickets($userid);
+      $tickets=$this->user_model->getTickets($userid,$limit,$stream);
    
      }
-      $this->output->set_content_type('application/json')->set_output(json_encode($tickets)); 
+    
+      echo json_encode($tickets); 
       
     }
     public function update_ticket_status()

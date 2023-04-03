@@ -19,30 +19,29 @@ class User_model extends CI_Model
          return false;
       }
    }
-   public function filter_ticket($myData,$userid)
+   public function filter_ticket($myData,$userid,$limit,$stream)
    {
-      
+     
       if($userid!=false)
       {
-         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,users.name');
+         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,users.name');
          $this->db->from('tickets');
          $this->db->join('users', 'users.user_id=tickets.assigned_to');
          $this->db->where('tickets.user_id', $userid);
       }
       else{
-         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,a.name as user_name,b.name as admin_name');
+         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,a.name as user_name,b.name as admin_name');
          $this->db->from('tickets');
          $this->db->join('users as a', 'a.user_id = tickets.user_id');
          $this->db->join('users as b', 'tickets.assigned_to=b.user_id');
          
       }
-
       if(property_exists($myData,'status')){
          $this->db->where('tickets.status', $myData->status);
       }
       
       if(property_exists($myData,'keyword')){
-         $where= "tickets.subject LIKE '%".$myData->keyword."%' OR tickets.ticket_id= '".$myData->keyword."'";
+         $where= "tickets.subject LIKE '%".$myData->keyword."%' OR tickets.ticket_id Like '%".$myData->keyword."%'";
          // $this->db->or_like('tickets.subject', $myData->keyword);
          $this->db->where($where);
       }
@@ -78,12 +77,62 @@ class User_model extends CI_Model
             $this->db->order_by("tickets.updation_time", "desc");
          }
       }
-      
-      $this->db->limit(10);
-      $query = $this->db->get();
+      if(property_exists($myData,'statuschange')){
 
+         if($myData->statuschange==0)
+         {
+            $this->db->having('tickets.status', '0');
+            $this->db->or_having('tickets.status', '1');
+            $this->db->or_having('tickets.status', '2');
+         }
+         else{
+            $this->db->having('tickets.status', '3');
+            $this->db->or_having('tickets.status', '4');
+            $this->db->or_having('tickets.status', '5');
+         }
+      }
+      if(property_exists($myData,'due')){
+
+         if($myData->due==0)
+         {
+            $this->db->having('tickets.status', '0');
+            $this->db->or_having('tickets.status', '1');
+            $this->db->or_having('tickets.status', '2');
+            $this->db->where('DATEDIFF(tickets.duedate,  CURRENT_TIMESTAMP) =', '0');
+         }
+         else{
+            $this->db->having('tickets.status', '3');
+            $this->db->or_having('tickets.status', '4');
+            $this->db->or_having('tickets.status', '5');
+            $this->db->where('DATEDIFF(tickets.duedate,  CURRENT_TIMESTAMP) >', '0');
+         }
+      }
+      if(property_exists($myData,'unassigned')){
+         $this->db->where('tickets.assigned_to','24');
+      }
+      if(property_exists($myData,'day')){
+         if($myData->day=='0'){
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','7');
+         }else{
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','30');
+         }
+        
+      }
+      //$this->db->limit(10);
+       $this->db->limit($limit,($stream-1)*$limit);
+      $query = $this->db->get();
       if ($query->num_rows > 0) {
          $results = $query->result_array();
+           
+         for($i=0;$i<count($results);$i++) {
+            $tags=$this->get_tags($results[$i]['ticket_id']);
+           
+            $texttag='';
+            foreach ($tags as $tag) {
+              $texttag.=$tag['tag_name'].", ";
+            }
+            $results[$i]['tag']=$texttag;
+          }
          return $results;
       } else {
          return false;
@@ -91,6 +140,229 @@ class User_model extends CI_Model
       }
 
    }
+   public function getFilterData(){
+      $result=[];
+      $this->db->select('tagid,tag_name');
+      $this->db->from('tags');
+      $query = $this->db->get()->result_array();
+      $result['tag'] = $query;
+      $this->db->select('department_id,department_name');
+      $this->db->from('department');
+      $query = $this->db->get()->result_array();
+      $result['department'] = $query;
+      $this->db->select('user_id,name');
+      $this->db->from('users');
+      $this->db->where('users.role', 1);
+      $query = $this->db->get()->result_array();
+      $result['user'] = $query;
+      return $result;
+   }
+   public function getDashboardData(){
+      $result=[];
+      $this->db->select('count(*)');
+      $this->db->from('tickets');
+      $this->db->where('tickets.status', '0');
+      $this->db->or_where('tickets.status', '1');
+      $this->db->or_where('tickets.status','2');
+      $query = $this->db->get()->result_array();
+      $result['open']=$query['0']['count(*)'];
+      $this->db->select('count(*)');
+      $this->db->from('tickets');
+      $this->db->where('tickets.status', '3');
+      $this->db->or_where('tickets.status','4' );
+      $this->db->or_where('tickets.status', '5');
+      $query = $this->db->get()->result_array();
+      $result['close']=$query['0']['count(*)'];
+      $this->db->select('count(*)');
+      $this->db->from('tickets');
+      $this->db->where('tickets.status', '0');
+      $this->db->or_where('tickets.status', '1');
+      $this->db->or_where('tickets.status','2');
+      $this->db->where('DATEDIFF(tickets.duedate,  CURRENT_TIMESTAMP) =', '0');
+      $query = $this->db->get()->result_array();
+      $result['duetoday']=$query['0']['count(*)'];
+      $this->db->select('count(*)');
+      $this->db->from('tickets');
+      $this->db->where('tickets.status', '0');
+      $this->db->or_where('tickets.status', '1');
+      $this->db->or_where('tickets.status','2');
+      $this->db->where('DATEDIFF(tickets.duedate,  CURRENT_TIMESTAMP) >', '0');
+      $query = $this->db->get()->result_array();
+      $result['due']=$query['0']['count(*)'];
+      $this->db->select('count(*)');
+      $this->db->from('tickets');
+      $this->db->where('tickets.assigned_to','24');
+      $query = $this->db->get()->result_array();
+      $result['assigned']=$query['0']['count(*)'];
+      return $result;
+   }
+   public function getLineGraphData(){
+      $this->db->select("count(*) AS Day,CAST(tickets.genration_time AS DATE) AS Date");
+      $this->db->from('tickets');
+      $this->db->group_by("Date");
+      $query = $this->db->get()->result_array();
+      return $query;
+   }
+   public function getBarGraphData(){
+      $this->db->select("count(*) AS Day,CAST(tickets.genration_time AS DATE) AS Date");
+      $this->db->from('tickets');
+      $this->db->where('tickets.status', '3');
+      $this->db->or_where('tickets.status','4' );
+      $this->db->or_where('tickets.status', '5');
+      $this->db->group_by("Date");
+      $query = $this->db->get()->result_array();
+      return $query;
+   }
+   public function getBarGraphFilterData($myData){
+      $this->db->select("count(*) AS Day,CAST(tickets.genration_time AS DATE) AS Date");
+      $this->db->from('tickets');
+      $this->db->where('tickets.status', '3');
+      $this->db->or_where('tickets.status','4' );
+      $this->db->or_where('tickets.status', '5');
+      $this->db->group_by("Date");
+      if(property_exists($myData,'day')){
+         if($myData->day=='0'){
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','7');
+         }else{
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','30');
+         }
+        
+      }
+      $query = $this->db->get()->result_array();
+      return $query;
+   }
+   public function getLineGraphFilterData($myData){
+      $this->db->select("count(*) AS Day,CAST(tickets.genration_time AS DATE) AS Date");
+      $this->db->from('tickets');
+      $this->db->group_by("Date");
+      if(property_exists($myData,'day')){
+         if($myData->day=='0'){
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','7');
+         }else{
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','30');
+         }
+        
+      }
+      $query = $this->db->get()->result_array();
+      return $query;
+   }
+   public function getDashboardFilterData($myData){
+      $result=[];
+      $this->db->select('count(*)');
+      $this->db->from('tickets');
+      $this->db->where('tickets.status', '0');
+      $this->db->or_where('tickets.status', '1');
+      $this->db->or_where('tickets.status','2');
+      if(property_exists($myData,'day')){
+         if($myData->day=='0'){
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','7');
+         }else{
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','30');
+         }
+        
+      }
+      $query = $this->db->get()->result_array();
+      $result['open']=$query['0']['count(*)'];
+      $this->db->select('count(*)');
+      $this->db->from('tickets');
+      $this->db->where('tickets.status', '3');
+      $this->db->or_where('tickets.status','4' );
+      $this->db->or_where('tickets.status', '5');
+      if(property_exists($myData,'day')){
+         if($myData->day=='0'){
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','7');
+         }else{
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','30');
+         }
+        
+      }
+      $query = $this->db->get()->result_array();
+      $result['close']=$query['0']['count(*)'];
+      $this->db->select('count(*)');
+      $this->db->from('tickets');
+      $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) =', '30');
+      if(property_exists($myData,'day')){
+         if($myData->day=='0'){
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','7');
+         }else{
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','30');
+         }
+        
+      }
+      $query = $this->db->get()->result_array();
+      $result['duetoday']=$query['0']['count(*)'];
+      $this->db->select('count(*)');
+      $this->db->from('tickets');
+      $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) >','30');
+      if(property_exists($myData,'day')){
+         if($myData->day=='0'){
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','7');
+         }else{
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','30');
+         }
+        
+      }
+      $query = $this->db->get()->result_array();
+      $result['due']=$query['0']['count(*)'];
+      $this->db->select('count(*)');
+      $this->db->from('tickets');
+      $this->db->where('tickets.status', '0');
+      $this->db->or_where('tickets.status', '1');
+      $this->db->or_where('tickets.status','2');
+      $this->db->where('tickets.assigned_to','24');
+      if(property_exists($myData,'day')){
+         if($myData->day=='0'){
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','7');
+         }else{
+            $this->db->where('TIMESTAMPDIFF(day,tickets.genration_time,CURRENT_TIMESTAMP) <=','30');
+         }
+        
+      }
+      $query = $this->db->get()->result_array();
+      $result['assigned']=$query['0']['count(*)'];
+      return $result;
+   }
+   // public function filter_ticket_open_close($myData,$userid,$limit,$stream)
+   // {
+   //    if($userid!=false)
+   //    {
+   //       $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,users.name');
+   //       $this->db->from('tickets');
+   //       $this->db->join('users', 'users.user_id=tickets.assigned_to');
+   //       $this->db->where('tickets.user_id', $userid);
+   //    }
+   //    else{
+   //       $this->db->select("tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,a.name as user_name,b.name as admin_name");
+   //       $this->db->from('tickets');
+   //       $this->db->join('users as a', 'a.user_id = tickets.user_id');
+   //       $this->db->join('users as b', 'tickets.assigned_to=b.user_id');
+         
+   //    }
+   //    if($myData)
+   //    $this->db->where('tickets.status', $myData['id0']);
+   //    $this->db->or_where('tickets.status', $myData['id1']);
+   //    $this->db->or_where('tickets.status', $myData['id2']);
+      
+   //    $this->db->limit($limit,($stream-1)*$limit);
+   //    $query = $this->db->get();
+
+   //    if ($query->num_rows > 0) {
+   //       $results = $query->result_array();
+   //       for($i=0;$i<count($results);$i++) {
+   //          $tags=$this->get_tags($results[$i]['ticket_id']);
+           
+   //          $texttag='';
+   //          foreach ($tags as $tag) {
+   //            $texttag.=$tag['tag_name'].", ";
+   //          }
+   //          $results[$i]['tag']=$texttag;
+   //        }
+   //       return $results;
+   //    } else {
+   //       return false;
+   //       // return $this->db->last_query();
+   //    }
+   // }
    public function populate_filter()
    {
       $this->db->select('users.user_id,users.name');
@@ -130,40 +402,65 @@ class User_model extends CI_Model
 
       return $data;
    }
-   public function getTickets($userId)
+   public function getTickets($userId,$limit,$stream)
    {
       if ($userId == false) {
-         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,a.name as user_name,b.name as admin_name');
+         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,a.name as user_name,b.name as admin_name');
          $this->db->from('tickets');
          $this->db->join('users as a', 'a.user_id = tickets.user_id');
          $this->db->join('users as b', 'tickets.assigned_to=b.user_id');
-         $this->db->limit(10);
+         $this->db->limit($limit,($stream-1)*$limit);
          $query = $this->db->get();
-
          if ($query->num_rows > 0) {
-
             $results = $query->result_array();
-
+           
+            for($i=0;$i<count($results);$i++) {
+               $tags=$this->get_tags($results[$i]['ticket_id']);
+              
+               $texttag='';
+               foreach ($tags as $tag) {
+                 $texttag.=$tag['tag_name'].", ";
+               }
+               $results[$i]['tag']=$texttag;
+             }
             return $results;
          } else {
             return false;
          }
       } else {
-         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,users.name');
+         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,users.name');
          $this->db->from('tickets');
          $this->db->join('users', 'users.user_id=tickets.assigned_to');
          $this->db->where('tickets.user_id', $userId);
-         $this->db->limit(10);
+         $this->db->limit($limit,($stream-1)*$limit);
          $query = $this->db->get();
 
          if ($query->num_rows > 0) {
             $results = $query->result_array();
+           
+            for($i=0;$i<count($results);$i++) {
+               $tags=$this->get_tags($results[$i]['ticket_id']);
+              
+               $texttag='';
+               foreach ($tags as $tag) {
+                 $texttag.=$tag['tag_name'].", ";
+               }
+               $results[$i]['tag']=$texttag;
+             }
             return $results;
          } else {
             return false;
          }
       }
    }
+   public function get_tags($ticketId) {
+      $this->db->select('tags.tag_name');
+      $this->db->from('ticket_tags');
+      $this->db->join('tags', 'ticket_tags.tagid=tags.tagid');
+      $this->db->where('ticket_tags.ticket_id', $ticketId);
+      $query =  $this->db->get();
+      return $query->result_array();
+  }
    public function update_ticket_status($status, $ticket_id)
    {
       $data = array(

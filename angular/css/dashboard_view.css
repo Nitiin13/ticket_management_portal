@@ -21,6 +21,9 @@
     
   
 }
+#tblticket{
+    margin:auto;
+}
 .ticket_count{
     margin-left: 30px;
     font-size: 16px;
@@ -104,6 +107,18 @@ background-color:#EBF1FE;
     margin-left:27px;
     line-height: 20px;
     background-color:var(--green-primary);
+    opacity: 1;
+    color:#ffffff;  
+}
+#btn_ticket_dashboard{
+    font-size: 14px;
+    width: 176px;
+    height: 35px;
+    font-family: 'Open Sans', sans-serif;
+    text-transform: none;
+    margin-left:27px;
+    line-height: 20px;
+    background-color:var(--primary);
     opacity: 1;
     color:#ffffff;  
 }
@@ -199,8 +214,8 @@ opacity: 1;
 line-height: 22px;
 }
 #status_menu{
-    width: 176px;
-    height: 86px;
+    width: 189px;
+    height: 140px;
 }
 #sort_menu{
     width:224px;
@@ -245,7 +260,9 @@ line-height: 22px;
 .large_screen_only{
     display: contents;
   }
-
+.open-close-status{
+    overflow:scroll;
+}
 
 @media only screen and (max-width: 500px){
     
