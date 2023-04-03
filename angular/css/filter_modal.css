@@ -1,3 +1,14 @@
+#modal-container{
+    position: fixed;
+    z-index: 1;
+    left: 142px;
+    top: 74px;
+    width: 75%;
+    height: 82%;
+    overflow: auto;
+    background-color: rgb(255, 255, 255); /* Fallback color */
+    box-shadow: 0 4px 8px 0 rgb(6 0 0), 1rem 1rem 1px 270px rgb(10 8 8 / 74%);
+}
 .filter-modal-header{
     display: flex;
     justify-content: space-between;
