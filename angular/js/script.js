@@ -1306,11 +1306,9 @@ app.controller("editticketController", function($scope, $http, FileUploader,$roo
                 return file.attachment;
             });
         }
-        // }, function(reason) {
-        //     $scope.error = reason.data;
-        // })
-    // }
-    // $scope.getTicketInfo();
+        $scope.discard=function(){
+            $state.go('Ticket',{'userid':$rootScope.userid});
+        }
         
     // TAGS
     $scope.addTag = function(tag) {
@@ -1624,15 +1622,6 @@ $scope.attachments=false;
         url:'http://localhost/TMS/user/user_image_upload/?ticketid=',
         formData:""
     });
-    // $scope.getTags = function() {
-    //     serviceApi.getTags()
-    //     .then(function(tagItems) {
-    //         $scope.tagItems = tagItems;
-    //         console.log($scope.tagItems);   
-    //     }, function(error) {
-    //         $scope.error = error;
-    //     });
-    // };
     $scope.tagNames = []; // tag name what user has entered
     $scope.tagItems = []; // tag names from backend
     
@@ -1655,10 +1644,7 @@ $scope.attachments=false;
       if ($scope.tagNames.indexOf(tag) == -1) {
         if(!$scope.tagNames.includes(tag)){
             $scope.tagNames.push(tag);
-            console.log($scope.tagNames);
-            // console.log($scope.tagItems);
-            // $scope.tagId.push(tag.tagid);
-            // console.log($scope.tagId);
+            // console.log($scope.tagNames);
         }
       }
       $scope.tag='';
@@ -1677,7 +1663,7 @@ $scope.attachments=false;
       if (index !== -1) {       
         $scope.tagNames.splice(index, 1);
         $scope.tagId.splice(index, 1);
-        console.log($scope.tagId);       
+        // console.log($scope.tagId);       
       }
     }
 
@@ -1745,9 +1731,7 @@ $scope.Getforminfo=function(){
        
         uploader.uploadAll();
              
-        $state.go('Ticket',{'userid':$rootScope.userid});    
-        
-         
+        $state.go('Ticket',{'userid':$rootScope.userid});
         
         }
         else if(response.data['error']==true){
@@ -2057,13 +2041,6 @@ app.controller('feedbackController', function($scope,serviceApi,$stateParams,$ht
         });
         $state.go('Ticket',$scope.user_id);
     }
-    // $scope.getTicketInfo = function() {
-    //     $http ({
-    //         method: 'GET',
-    //         url: 'getticket/getticketinfo/' + $scope.ticketId
-    //     })
-    //     .then(function(response) {
-    //         $scope.ticketInfo = response.data;
             $scope.userid = $scope.ticketInfo.users[0].user_id;
             if( $rootScope.userid != $scope.userid ) {
                 $state.go('Home');
@@ -2074,10 +2051,6 @@ app.controller('feedbackController', function($scope,serviceApi,$stateParams,$ht
             $scope.adminName = $scope.ticketInfo.admin.find(admin => admin.user_id === $scope.selectedAdmin).name;
             $scope.updation_time= $scope.ticketInfo.ticket[0].updation_time;
             }
-    //     });
-    // }
-    // $scope.getTicketInfo();
-
     $scope.rating = function(star) {
         $scope.star = star;
         $scope.ratingStars = document.querySelectorAll('.rating-star');
@@ -2131,6 +2104,7 @@ app.controller('feedbackController', function($scope,serviceApi,$stateParams,$ht
             icon: "success",
 
         });
+        $state.go('viewTicket', { ticketId: $scope.ticketId });
       });
     };
 });

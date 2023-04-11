@@ -1,23 +1,23 @@
 <div class="modal feedback_modal">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-body">
-          
-          <div class="feedback_form">
-            <div class="feedback_header">
-                <h3>Your Feedback</h3>
-                <div>
+      <div class="modal-body">       
+        <div class="feedback_form">
+          <div class="feedback_header">
+            <h3 ng-if="!admin">Your Feedback</h3>
+            <h3 ng-if="admin">User's Feedback</h3>
+            <div>
               <a ui-sref="editfeedback({ ticketId: ticketId })" ng-if="!admin">
                 <button class="editfeedback">Edit Feedback</button>
               </a>
               <span class="material-icons close_feedback" ng-click="closeModal()">close</span>
             </div>
-            <span style="color: #9b9b9b;text-align: left;width: 100%;">submitted on {{submitted}}</span><br>
-              <p>Your ticket related to <b>{{fsubject}}</b> has been resolved and closed by the assignee 
-                <b>{{adminName}} </b> on <b>{{updation_time}}</b>. If you need any further assistance then please reply to us.</p>
-                <form>
-              <div class="rating">
-                
+          </div>
+          <span style="color: #9b9b9b;text-align: left;width: 100%;">submitted on {{submitted}}</span><br>
+            <p>Your ticket related to <b>{{fsubject}}</b> has been resolved and closed by the assignee 
+              <b>{{adminName}} </b> on <b>{{updation_time}}</b>. If you need any further assistance then please reply to us.</p>
+          <form>
+            <div class="rating">               
                 <p> 1. Rate the overall quality of the help desk service*</p>
                 <span style="color: #9b9b9b;">Answer</span><br>
                 <span style="font-size:24px" data-value="1" class="fa fa-star rating-star"></span>
@@ -25,27 +25,20 @@
                 <span style="font-size:24px" data-value="3" class="fa fa-star rating-star"></span>
                 <span style="font-size:24px" data-value="4" class="fa fa-star rating-star"></span>
                 <span style="font-size:24px" data-value="5" class="fa fa-star rating-star"></span>
-              </div>
-              <div class="satisfaction">
-                <p>2. Did the help desk representative provide a satisfactory resolution?*</p>
-                <span style="color: #9b9b9b;">Answer</span><br>
-                  <input class="mdl-textfield__input" ng-model="recommend" disabled>
-              </div>
-              <div class="feedback_comment">
-                <p>3. Would you like to add a comment?</p>
-                <span style="color: #9b9b9b;">Answer</span><br>
-                  <input class="mdl-textfield__input" type="text" id="comment" ng-model="comments" disabled>
-              </div>
-            </form>
-          </div>
-          </div>
-          </div>
-          </div>
-          </div>
-        <!-- </div> -->
-      </div>
-      <div class="modal-footer">
-        
+            </div>
+            <div class="satisfaction">
+              <p>2. Did the help desk representative provide a satisfactory resolution?*</p>
+              <span style="color: #9b9b9b;">Answer</span><br>
+              <input class="mdl-textfield__input" ng-model="recommend" disabled>
+            </div>
+
+            <div class="feedback_comment">
+              <p>3. Would you like to add a comment?</p>
+              <span style="color: #9b9b9b;">Answer</span><br>
+              <input class="mdl-textfield__input" type="text" id="comment" ng-model="comments" disabled>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
