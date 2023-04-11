@@ -1,4 +1,19 @@
 var app=angular.module("myApp", ["ui.router","ServiceModule","angularFileUpload","infinite-scroll","angularModalService","zingchart-angularjs"]);
+app.filter('stripTags', function() {
+    return function(input) {
+      if (input) {
+        // Strip HTML tags using a regular expression
+        return input.replace(/(<([^>]+)>)/ig,"");
+      } else {
+        return '';
+      }
+    };
+});
+app.filter('to_trusted', ['$sce', function($sce){
+    return function(text) {
+        return $sce.trustAsHtml(text);
+    };
+}]);  
 app.directive("ckeditor", [function(){
     return {
         restrict: "A",
@@ -13,28 +28,27 @@ app.directive("ckeditor", [function(){
 }]);
 var userid;
 app.run(function ($rootScope,$timeout,$window) {
-                    $rootScope.session=$window.session;
-                    // $rootScope.isLoggedIn=null;
-                    $rootScope.userid=$window.userid;
-                    $rootScope.role=$window.user_role;
-                    $rootScope.loggedname=$window.user_name;
-                    $rootScope.loggedemail=$window.user_email;
-                    userid==$rootScope.userid;
+    // console.log(sessionStorage.getItem('isLoggedin'));    
+    // if (localStorage.getItem('isLoggedin') === 'true') { $rootScope.isLoggedin = true; }
+    // else { $rootScope.isLoggedin = false; }
+        $rootScope.session=$window.session;
+        // $rootScope.isLoggedIn=null;
+        $rootScope.userid=$window.userid;
+        $rootScope.role=$window.user_role;
+        $rootScope.loggedname=$window.user_name;
+        $rootScope.loggedemail=$window.user_email;
+        userid==$rootScope.userid;
     $rootScope.$on('$viewContentLoaded', ()=> {
       $timeout(() => {
-        componentHandler.upgradeAllRegistered();
-        
+        componentHandler.upgradeAllRegistered(); 
       })
-
     })
-  });
- 
+}); 
 app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvider,$locationProvider)
 {
-    
     $urlRouterProvider.otherwise('Home');
     $locationProvider.html5Mode(true);
-   $urlMatcherFactoryProvider.caseInsensitive(true);
+    $urlMatcherFactoryProvider.caseInsensitive(true);
     $stateProvider.state('Home',{
         url:'/home',
         templateUrl:'angular/templates/login.html',
@@ -80,7 +94,12 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
         templateUrl:'angular/templates/dashboard.html',
         controller:'dashboardController',
         resolve:{
-          
+                averageRating: function($http) {
+                    return $http.get('getticket/get_average_rating')
+                        .then(function(response) {
+                            return response.data;
+                        });
+                },
            dashboard_data: ['$stateParams', 'serviceApi','$rootScope', function ($stateParams, serviceApi,$rootScope)  {
            
            // result['1']=serviceApi.getLineGraphData().data;
@@ -126,47 +145,66 @@ app.config(function($stateProvider, $urlRouterProvider,$urlMatcherFactoryProvide
         url:'/test',
         templateUrl:'angular/templates/test.html',
         controller:'testController'
-// <<<<<<< HEAD
-     })
-//     .state('filter',{
-//         url:'/filter',
-//         templateUrl:'angular/templates/filter_modal.html',
-//         controller:'filterModalController',
-//         params: {
-//             filters_to_be_applied:null
-//         },
-//         resolve:{
-         
-//             populate_data: ['serviceApi', function (serviceApi)  {
-//                  // $stateParams will contain any parameter defined in your url
-//                 // serviceApi.populate_filter().then(function(response){
-//                 //     return response.data;
-//                 // },function(response){
-            
-//                 // });
-
-//                 return serviceApi.populate_filter()
-                
-                
-//          }]}
-//     })
+    })
     .state('editTicket', {
-        url:'/editticket',
+        url:'/editticket/:ticketId',
         templateUrl:'angular/templates/editTicket.html',
         controller:'editticketController',
+        resolve: {
+            ticketInfo: function($http, $stateParams) {
+                return $http.get('getticket/getticketinfo/' + $stateParams.ticketId)
+                    .then(function(response) {
+                        return response.data;
+                    });
+            }
+        }
+        
     })
     .state('viewTicket', {
-        url:'/viewticket',
+        url:'/viewticket/:ticketId',
         templateUrl:'angular/templates/viewTicket.html',
         controller:'viewticketController',
+        resolve: {
+            ticketInfo: function($http, $stateParams) {
+                return $http.get('getticket/getticketinfo/' + $stateParams.ticketId)
+                    .then(function(response) {
+                        return response.data;
+                    });
+            }
+        }
+    })
+    .state('feedback', {
+        url:'/feedback/:ticketId',
+        templateUrl:'angular/templates/feedback.html',
+        controller:'feedbackController',
+        resolve: {
+            ticketInfo: function($http, $stateParams) {
+                return $http.get('getticket/getticketinfo/' + $stateParams.ticketId)
+                    .then(function(response) {
+                        return response.data;
+                    });
+            }
+        }
+    })
+    // .state('viewFeedback', {
+    //     // url:'/viewFeedback/:ticketId',
+    //     // templateUrl:'angular/templates/viewFeedback.html',
+    //     // controller:'viewFeedback',
+    // })
+    .state('editfeedback', {
+        url:'/editFeedback/:ticketId',
+        templateUrl:'angular/templates/editFeedback.html',
+        controller:'editFeedback',
+        resolve: {
+            ticketInfo: function($http, $stateParams) {
+                return $http.get('getticket/getticketinfo/' + $stateParams.ticketId)
+                    .then(function(response) {
+                        return response.data;
+                    });
+            }
+        }
     })
 });
-// =======
-//    });
-// })
-
-// >>>>>>> 2861883b75cf03735793b0f9891c8503e9384cbb
-
 app.controller('testController',function($scope){
     
 var snackbarContainer = document.getElementById('demo-snackbar-example');
@@ -215,6 +253,8 @@ app.controller('signupController',function($scope,serviceApi,$state,$rootScope){
                                 $rootScope.userid=response.data.data.user_id;
                                 $rootScope.role=response.data.data.user_role;
                                 $rootScope.name=response.data.data.user_name;
+                                localStorage.setItem('isLoggedin', true);
+                                localStorage.setItem('userid',response.data.data.user_id);
                                 $state.go('Ticket',datap);
                             }
                         },function(response){});
@@ -480,14 +520,17 @@ app.controller('logoutController',function($scope,serviceApi,$rootScope,$state,$
             {
                 $window.session='0';
                 $rootScope.session=$window.session;
-                
-                // $rootScope.isLoggedIn=null;
-               $rootScope.userid=null;
+                localStorage.clear();
+                $rootScope.isLoggedIn=false;
+                $rootScope.userid=null;
+                $rootScope.role=null;
+                $rootScope.loggedname=null;
+                console.log($rootScope);
                 $state.go('Home');
             }
             
         },function(response){
-login
+            // login
             return false;
         })
     }
@@ -580,7 +623,24 @@ else{
               }
 
 }});
-app.controller("ticketController",function($scope,tickets,$rootScope,$state,serviceApi,$stateParams,ModalService){
+app.controller("ticketController",function($scope,tickets,$rootScope,$state,serviceApi,$stateParams,ModalService,$window){
+    $scope.deleteTickets = function() {
+        alert("entered delete Ticket Function");
+        var data = {
+            tickets : $scope.lst
+        }
+        var postData = 'myData='+JSON.stringify(data); 
+        serviceApi.deletetickets(postData).then(function(response){
+        $window.location.reload();
+        swal({
+            title: "Success",
+            text: "Ticket Deleted Successfully",
+            type: "success",
+            confirmButtonText: "Ok",
+            closeOnConfirm: true
+        })
+        });
+    }
     // if($rootScope.session!='0' || $rootScope.isLoggedIn!=null)
     if($rootScope.session!='0')
     {
@@ -651,15 +711,19 @@ app.controller("ticketController",function($scope,tickets,$rootScope,$state,serv
                 $scope.getChecked($scope.selectAll,ticket.ticket_id);
             })
         }
-
+        $scope.viewTicket = function(ticketId) {
+            window.location.href = 'viewticket/' + ticketId;
+        };          
         $scope.getChecked = function(check,value){
             
             if(check){
                 if(!$scope.lst.includes(value)){
                    $scope.lst.push(value);
+                   $scope.goToEdit = $scope.lst[0];
                 }
             }else{
                  $scope.lst.splice($scope.lst.indexOf(value), 1);
+                 $scope.goToEdit = $scope.lst[0];
             }
             $scope.chklength=$scope.lst.length;
             if($scope.chklength!=0)
@@ -829,12 +893,26 @@ app.controller("ticketController",function($scope,tickets,$rootScope,$state,serv
             }
 
         }
-       
-          $scope.statusChanged = function(item,t_id){       
+          $scope.statusChanged = function(item,t_id,user_name,subject,admin_name,email){       
                     var u_details={
                         'status':item,
                         'ticket':t_id,
                     }
+                    // comment
+                    var data2 = {
+                        name: user_name,
+                        subject: subject,
+                        assigned: admin_name,
+                        email : email,
+                        ticketId: t_id
+                    }
+                    console.log(data2);
+                    var postData = 'myData='+JSON.stringify(data2);
+                    if(u_details.status == 3) {
+                        serviceApi.feedback(postData).then(function(response){
+                        });
+                    }
+                    // comment
                     var update_data = 'myData2='+JSON.stringify(u_details);
                     serviceApi.update_status(update_data).then(function(response){
                         if(response.data==1)
@@ -923,7 +1001,6 @@ app.controller("ticketController",function($scope,tickets,$rootScope,$state,serv
         $state.go('Home');
     }
 });
-
 app.controller('filterModalController',function($scope,serviceApi,$state,$stateParams,close,$rootScope){
     $scope.dismissModal = function() {
         close(200); // close, but give 200ms for bootstrap to animate
@@ -1103,20 +1180,20 @@ app.controller('filterModalController',function($scope,serviceApi,$state,$stateP
     }
     
 });
-app.controller("editticketController", function($scope, $http, FileUploader,$rootScope,$state, serviceApi){
+app.controller("editticketController", function($scope, $http, FileUploader,$rootScope,$state,ticketInfo, serviceApi,$stateParams){
     if($rootScope.session!='0')
     {
         $scope.it='-1';
         $scope.keyword = null;
-        console.log('logged in');
-        console.log($rootScope.role);
+        // console.log('logged in');
+        // console.log($rootScope.role);
         if($rootScope.role!="0"){
             $rootScope.admin=true;
         }
         else{
             $rootScope.admin=false;
         }
-      }
+    }
     
     $scope.reqerror=false;
     $scope.data='';
@@ -1128,7 +1205,25 @@ app.controller("editticketController", function($scope, $http, FileUploader,$roo
     });
     $scope.selectedDepartment = '';
     $scope.selectedPriority = '';
-           
+    $scope.statusOption = [
+        { id: '0' , name: 'to be reviewed' },
+        { id: '1' , name: 'In progress' },
+        { id: '2' , name: 'on hold' },
+        { id: '3' , name:'resolved'},
+        { id: '4', name:'dropped'},
+        { id : '5', name:'resolved and closed'}
+    ];
+    $scope.assistantProcess = [
+        { id: '0', name: 'Tech Assistant' },
+        { id: '1', name: 'Finance Assistant' },
+        { id: '2', name: 'proces 3' }
+    ];
+    $scope.priorityOption = [
+        { id: '0', name: 'none' },
+        { id: '1', name: 'Low' },
+        { id: '2', name: 'Medium' },
+        { id: '3', name: 'High' },
+    ];
         // DATE PICKER
         flatpickr("#datepicker", {
             minDate: "today"
@@ -1144,16 +1239,29 @@ app.controller("editticketController", function($scope, $http, FileUploader,$roo
             $scope.error = reason.data;
         })
     }
-    $scope.getTicketInfo = function() {
-        $http ({
-            method: 'GET',
-            url: 'getticket'
+    $scope.ticketId = $stateParams.ticketId;
+    $scope.ticketInfo = ticketInfo;
+    if($scope.ticketInfo.ticket[0].length < 0) {
+        swal({
+            title: "Error",
+            text: "user unauthorized",
+            type: "error",
+            confirmButtonText: "Ok"
         })
-        .then(function(response) {
-            $scope.ticketInfo = response.data;
-            $scope.user = $scope.ticketInfo.users[0];
-            $scope.ticket_id = $scope.ticketInfo.ticket[0].ticket_id;
-            $scope.selectedAdmin = $scope.ticketInfo.ticket[0].assigned_to;
+        $state.go('Ticket',$rootScope.userid);
+    }
+    $scope.userid = $scope.ticketInfo.users[0].user_id;
+    if($rootScope.userid != $scope.userid && !$scope.admin) {
+         $state.go('Ticket',$rootScope.userid);
+    }
+    else if( $rootScope.userid == $scope.userid || $scope.admin){
+        $scope.user = $scope.ticketInfo.users[0];
+        $scope.name = $scope.user.name;
+        $scope.ticket_id = $scope.ticketInfo.ticket[0].ticket_id;
+        $scope.selectedAdmin = $scope.ticketInfo.ticket[0].assigned_to;
+        $scope.adminName = $scope.ticketInfo.admin.find(admin => admin.user_id === $scope.selectedAdmin).name;
+        $scope.email = $scope.user.email;
+        $scope.subject = $scope.ticketInfo.ticket[0].subject;
             // DEPARTMENT
             $scope.d_id = $scope.ticketInfo.ticket[0].internal_department;
             for (var i = 0; i < $scope.ticketInfo.department.length; i++) {
@@ -1164,14 +1272,6 @@ app.controller("editticketController", function($scope, $http, FileUploader,$roo
             }
             // STATUS  
             $scope.status_id = $scope.ticketInfo.ticket[0].status;
-            $scope.statusOption = [
-                { id: '0' , name: 'to be reviewed' },
-                { id: '1' , name: 'In progress' },
-                { id: '2' , name: 'on hold' },
-                { id: '3' , name:'resolved'},
-                { id: '4', name:'dropped'},
-                { id : '5', name:'resolved and closed'}
-            ];
             for (var i = 0; i < $scope.statusOption.length; i++) {
                 if ($scope.statusOption[i].id === $scope.status_id) {
                 $scope.selectedStatus = $scope.statusOption[i].id;
@@ -1180,11 +1280,6 @@ app.controller("editticketController", function($scope, $http, FileUploader,$roo
             }
             // ASSISTANCE PROCESS
             $scope.process_id = $scope.ticketInfo.ticket[0].assistance_process;
-            $scope.assistantProcess = [
-                { id: '0', name: 'Tech Assistant' },
-                { id: '1', name: 'Finance Assistant' },
-                { id: '2', name: 'proces 3' }
-            ];
             for (var i = 0; i < $scope.assistantProcess.length; i++) {
                 if ($scope.assistantProcess[i].id === $scope.process_id) {
                 $scope.selectedProcess = $scope.assistantProcess[i].id;
@@ -1192,12 +1287,6 @@ app.controller("editticketController", function($scope, $http, FileUploader,$roo
                 }
             }
             // PRIORITY
-            $scope.priorityOption = [
-                { id: '0', name: 'none' },
-                { id: '1', name: 'Low' },
-                { id: '2', name: 'Medium' },
-                { id: '3', name: 'High' },
-            ];
             $scope.priority_id = $scope.ticketInfo.ticket[0].priority;
             for (var i = 0; i < $scope.priorityOption.length; i++) {
                 if ($scope.priorityOption[i].id === $scope.priority_id) {
@@ -1216,11 +1305,12 @@ app.controller("editticketController", function($scope, $http, FileUploader,$roo
             $scope.files_original = $scope.ticketInfo.attachments.map(function(file) {
                 return file.attachment;
             });
-        }, function(reason) {
-            $scope.error = reason.data;
-        })
-    }
-    $scope.getTicketInfo();
+        }
+        // }, function(reason) {
+        //     $scope.error = reason.data;
+        // })
+    // }
+    // $scope.getTicketInfo();
         
     // TAGS
     $scope.addTag = function(tag) {
@@ -1297,6 +1387,20 @@ app.controller("editticketController", function($scope, $http, FileUploader,$roo
         
         var ticket_data = 'myData3='+JSON.stringify(formdata);
         serviceApi.editTicket(ticket_data).then(function(response){
+            
+            var data2 = {
+                name: $scope.name,
+                subject: $scope.subject,
+                assigned: $scope.adminName,
+                email : $scope.email,
+                ticketId: $scope.ticket_id
+            }
+            var postData = 'myData='+JSON.stringify(data2);
+            if(formdata.status == 3) {
+                serviceApi.feedback(postData).then(function(response){
+                });
+            }
+
             if(response.data['error']==false)
             {
                 // $scope.ticket_id=response.data['ticket_id'];
@@ -1313,18 +1417,21 @@ app.controller("editticketController", function($scope, $http, FileUploader,$roo
                 // console.log($scope.ticket_id);
                 item.url='http://localhost/TMS/user/user_image_upload/?ticketid='+$scope.ticket_id;               
             }          
-            uploader.uploadAll();    }
+            uploader.uploadAll();
+            $state.go('viewTicket',{'ticketId': $scope.ticket_id});
+                }
             else {            
-            $state.go('Ticket',{'userid':$rootScope.userid});              
+                $state.go('viewTicket',{'ticketId': $scope.ticket_id});               
             }
             }
             else if(response.data['error']==true){
                 var snackbarContainer = document.querySelector('#demo-toast-example');
                 var data = {message: 'Failed to edit ticket'};
                 snackbarContainer.MaterialSnackbar.showSnackbar(data);
+                $state.go('viewTicket',{'ticketId': $scope.ticket_id});  
             }       
         },function(response){
-        
+            $state.go('viewTicket',{'ticketId': $scope.ticket_id});
         });
     }
     else{
@@ -1334,9 +1441,8 @@ app.controller("editticketController", function($scope, $http, FileUploader,$roo
     }
 
 });
-// app.controller("newticketController",function($scope,FileUploader,$rootScope,serviceApi,$state,$http){
-app.controller("dashboardController",function($scope,dashboard_data,line_data,bar_data,$state,$rootScope,$stateParams,serviceApi){
-    if($rootScope.session!='0')
+app.controller("dashboardController",function($scope,averageRating,dashboard_data,line_data,bar_data,$state,$rootScope,$stateParams,serviceApi){
+    if($rootScope.session!='0' && $rootScope.role == 1)
     {
     if(dashboard_data!=null){
         $scope.dashboard_data=dashboard_data.data;
@@ -1427,6 +1533,9 @@ app.controller("dashboardController",function($scope,dashboard_data,line_data,ba
             });
         }
       }
+      $scope.averageRating = averageRating;
+      console.log("average");
+      console.log($scope.averageRating);
       $scope.day = [
         { id: -1, name: 'All Ticket'},
         { id: 0, name: 'Last 7 day' },
@@ -1489,7 +1598,23 @@ app.controller("dashboardController",function($scope,dashboard_data,line_data,ba
         $state.go('Home');
     }
 });
-app.controller("newticketController",function($scope,FileUploader,$rootScope,serviceApi,$state){
+app.controller("newticketController",function($scope,FileUploader,$rootScope,serviceApi,$state,$http){
+    if($rootScope.session!='0')
+    {
+        $scope.it='-1';
+        $scope.keyword = null;
+        console.log('logged in');
+        console.log($rootScope.role);
+        if($rootScope.role!="0"){
+            $rootScope.admin=true;
+        }
+        else{
+            $rootScope.admin=false;
+        }
+    }
+    else {
+        $state.go("Home");
+    }
     $scope.reqerror=false;
     $scope.subject='';
 // $scope.accountno='';
@@ -1581,15 +1706,12 @@ uploader.onAfterAddingAll = function(addedFileItems) {
     }
 
 }
-
-
 $scope.discard=function(){
     $scope.subject='';
     $scope.reqerror=false;
     // $scope.accountno='';
     uploader.clearQueue();
     CKEDITOR.instances.editor1.setData( '<p></p>');
-    
 }
 $scope.Getforminfo=function(){
     $scope.desc=CKEDITOR.instances.editor1.getData();
@@ -1606,8 +1728,6 @@ $scope.Getforminfo=function(){
         'tags' : $scope.tagNames
         // 'tags' : $scope.tagId
     }
-   
-   
     
     var ticket_data = 'myData3='+JSON.stringify(formdata);
     serviceApi.addTicket(ticket_data).then(function(response){
@@ -1617,10 +1737,7 @@ $scope.Getforminfo=function(){
             formdata={
                 'ticketid':$scope.ticket_id,
             }
-            uploader['formData']=JSON.stringify(formData);
-           
-        
-        
+            uploader['formdata']=JSON.stringify(formdata);
         uploader.onBeforeUploadItem = function(item){
             item.url='http://localhost/TMS/user/user_image_upload/?ticketid='+$scope.ticket_id;
             
@@ -1649,12 +1766,44 @@ else{
 uploader.clearQueue();
 }
 }});
-app.controller("viewticketController",function($scope,$http,FileUploader) {
+app.controller("viewticketController",function($scope,$http,$stateParams,ticketInfo,$rootScope,serviceApi,$rootScope,ModalService,$state) {
+    if($rootScope.session!='0')
+    {
+        $scope.it='-1';
+        $scope.keyword = null;
+        console.log('logged in');
+        console.log($rootScope.role);
+        if($rootScope.role!="0"){
+            $rootScope.admin=true;
+        }
+        else{
+            $rootScope.admin=false;
+        }
+    }
+    $scope.toggleDrawer = function() {
+        var drawer = angular.element(document.querySelector('.mdl-layout__drawer'));
+        var obfuscator = angular.element(document.querySelector('.mdl-layout__obfuscator'));
+
+        drawer.toggleClass('is-visible');
+        obfuscator.toggleClass('is-visible');
+    };
+    $scope.openModal = function() {
+        ModalService.showModal({
+          templateUrl: 'angular/templates/viewFeedback.html',
+          controller: 'viewFeedback'
+        }).then(function(modal) {
+            modal.close.then(function(result) {
+                close(result, 200);
+            });
+        });
+        $('.modal-backdrop').appendTo(document.body);
+    };
+
         // $scope.selectedDate = null;   
         // DATE PICKER
-        flatpickr("#datepicker", {
-            minDate: "today"
-        });
+    flatpickr("#datepicker", {
+        minDate: "today"
+    });
     $scope.statusOption = [
         { id: '0' , name: 'to be reviewed' },
         { id: '1' , name: 'In progress' },
@@ -1674,29 +1823,49 @@ app.controller("viewticketController",function($scope,$http,FileUploader) {
         { id: '2', name: 'Medium' },
         { id: '3', name: 'High' },
     ];
-    $scope.getTicketInfo = function() {
-        $http ({
-            method: 'GET',
-            url: 'getticket'
+    $scope.ticketId = $stateParams.ticketId;
+    console.log($scope.ticketInfo);
+    $scope.ticketInfo = ticketInfo;
+    if($scope.ticketInfo.ticket.length == 0) {
+        swal({
+            title: "Error",
+            text: "No Ticket Found",
+            icon: "error"
         })
-        .then(function(response) {
-            $scope.ticketInfo = response.data;
-            $scope.user = $scope.ticketInfo.users[0];
-            $scope.ticket_id = $scope.ticketInfo.ticket[0].ticket_id;
-            if($scope.ticketInfo.feedback.length > 0) {
-                $scope.feedback = 'TRUE';
-            }
-            // ASSIGNED TO
-            $scope.selectedAdmin = $scope.ticketInfo.ticket[0].assigned_to;
-            $scope.adminName = $scope.ticketInfo.admin.find(admin => admin.user_id === $scope.selectedAdmin).name;
-            // DEPARTMENT
-            $scope.d_id = $scope.ticketInfo.ticket[0].internal_department;
-            for (var i = 0; i < $scope.ticketInfo.department.length; i++) {
-                if ($scope.ticketInfo.department[i].department_id === $scope.d_id) {
-                $scope.selectedDepartment = $scope.ticketInfo.department[i].department_id;
-                break;
-                }
-            }
+        $state.go('Ticket',$rootScope.userid);
+    }else {
+        $scope.userid = $scope.ticketInfo.users[0].user_id;
+    }
+    if($rootScope.userid != $scope.userid && !$scope.admin) {
+        swal({
+            title: "Error",
+            text: "user unauthorized",
+            icon: "error"
+        })
+         $state.go('Ticket',$rootScope.userid);
+    }
+    else if( $rootScope.userid == $scope.userid || $scope.admin){
+    console.log($scope.ticketInfo);
+    $scope.user = $scope.ticketInfo.users[0];
+    $scope.name = $scope.user.name;
+    $scope.email = $scope.user.email;
+    $scope.ticket_id = $scope.ticketInfo.ticket[0].ticket_id;
+    if($scope.ticketInfo.feedback.length > 0) {
+        $scope.feedback = 'TRUE';
+    }
+    $scope.subject = $scope.ticketInfo.ticket[0].subject;
+    // ASSIGNED TO
+    $scope.selectedAdmin = $scope.ticketInfo.ticket[0].assigned_to;
+    $scope.adminName = $scope.ticketInfo.admin.find(admin => admin.user_id === $scope.selectedAdmin).name;
+    $scope.description = $scope.ticketInfo.ticket[0].description
+    // DEPARTMENT
+    $scope.d_id = $scope.ticketInfo.ticket[0].internal_department;
+    for (var i = 0; i < $scope.ticketInfo.department.length; i++) {
+        if ($scope.ticketInfo.department[i].department_id === $scope.d_id) {
+        $scope.selectedDepartment = $scope.ticketInfo.department[i].department_id;
+        break;
+        }
+    }
             // STATUS  
             $scope.status_id = $scope.ticketInfo.ticket[0].status;
             for (var i = 0; i < $scope.statusOption.length; i++) {
@@ -1723,6 +1892,9 @@ app.controller("viewticketController",function($scope,$http,FileUploader) {
             }
             // DUE DATE
             $scope.selectedDate = $scope.ticketInfo.ticket[0].duedate;
+            if($scope.selectedDate == null) {
+                $scope.selectedDate = "Not Selected";
+            }
             // TAGS
             $scope.tagNames = $scope.ticketInfo.tags.map(function(tag) {
                 return tag.tag_name;
@@ -1731,24 +1903,32 @@ app.controller("viewticketController",function($scope,$http,FileUploader) {
             $scope.files = $scope.ticketInfo.attachments.map(function(file) {
                 return file.attachment;
             });
-        }, function(reason) {
-            $scope.error = reason.data;
-        })
-    }
-    $scope.getTicketInfo();
+        }
     $scope.updateTicketStatus = function() {
         var data = {
             status: $scope.selectedStatus,
             ticketId: $scope.ticket_id
         };
+        var data2 = {
+            name: $scope.name,
+            subject: $scope.subject,
+            assigned: $scope.adminName,
+            email : $scope.email,
+            ticketId: $scope.ticket_id
+        }
+        var postData = 'myData='+JSON.stringify(data2);
         $http.post('getticket/updatestatus',data)
-            .then(function(response) {
+            .then(function(response) {         
                 swal({
                     title: "Ticket Status Updated!",
                     text: "The ticket status has been updated successfully.",
                     icon: "success",
 
                 });
+                if(data.status == 3) {
+                    serviceApi.feedback(postData).then(function(response){
+                    });
+                }
             }, function(error) {
                 swal({
                     title: "Error",
@@ -1799,5 +1979,308 @@ app.controller("viewticketController",function($scope,$http,FileUploader) {
                     });
             });
     }
+    $scope.showDeleteDialog = function() {
+        var dialog = document.querySelector('dialog');
+        dialog.showModal();
+      };
+    $scope.hideDeleteDialog = function() {
+        var dialog = document.querySelector('dialog');
+        dialog.close();
+    };     
+    $scope.deleteItem = function() {
+        var data = {
+            ticketId: $scope.ticket_id
+        }
+        var postData = 'myData='+JSON.stringify(data);       
+        serviceApi.deleteticket(postData).then(function(response){
+            swal({
+                title: "Ticket Deleted!",
+                text: "The ticket has been deleted successfully.",
+                icon: "success",
+            });
+            $state.go('Ticket',$rootScope.userid);
+
+        });
+        $scope.hideDeleteDialog();
+    };
        
+});
+app.controller('feedbackController', function($scope,serviceApi,$stateParams,$http,$state,$rootScope,ticketInfo) {
+    if($rootScope.session!='0')
+    {
+        $scope.it='-1';
+        $scope.keyword = null;
+        // console.log('logged in');
+        // console.log($rootScope.role);
+        if($rootScope.role!="0"){
+            $rootScope.admin=true;
+        }
+        else{
+            $rootScope.admin=false;
+        }
+    }    
+    if($rootScope.admin) {
+        swal({
+            title: "Error",
+            text: "admin can't add feedback",
+            icon: "error"
+        })
+        $state.go('Ticket',$rootScope.user_id);
+    }
+    $scope.ticketId = $stateParams.ticketId;
+    $scope.userRating = 0;
+    $scope.recommend = '';
+    $scope.comments = '';
+    $scope.ticketInfo = ticketInfo;
+    // console.log($scope.ticketInfo);
+    if($scope.ticketInfo.ticket.length == 0) {
+        swal({
+            title: "Error",
+            text: "No ticket found",
+            icon: "error"
+        });
+        $state.go('Ticket',$scope.user_id);
+    }
+    if($scope.ticketInfo.feedback.length > 0) {
+        swal({
+            title: "Error",
+            text: "Feedback already submitted",
+            icon: "error"
+        });
+        $state.go('Ticket',$scope.user_id);
+    }
+    if($scope.ticketInfo.ticket[0].status != 3) {
+        swal({
+            title: "Error",
+            text: "Ticket is not resolved yet.",
+            icon: "error"
+        });
+        $state.go('Ticket',$scope.user_id);
+    }
+    // $scope.getTicketInfo = function() {
+    //     $http ({
+    //         method: 'GET',
+    //         url: 'getticket/getticketinfo/' + $scope.ticketId
+    //     })
+    //     .then(function(response) {
+    //         $scope.ticketInfo = response.data;
+            $scope.userid = $scope.ticketInfo.users[0].user_id;
+            if( $rootScope.userid != $scope.userid ) {
+                $state.go('Home');
+            }
+            else {
+            $scope.subject = $scope.ticketInfo.ticket[0].subject;
+            $scope.selectedAdmin = $scope.ticketInfo.ticket[0].assigned_to;
+            $scope.adminName = $scope.ticketInfo.admin.find(admin => admin.user_id === $scope.selectedAdmin).name;
+            $scope.updation_time= $scope.ticketInfo.ticket[0].updation_time;
+            }
+    //     });
+    // }
+    // $scope.getTicketInfo();
+
+    $scope.rating = function(star) {
+        $scope.star = star;
+        $scope.ratingStars = document.querySelectorAll('.rating-star');
+        for (var i = 0; i < $scope.ratingStars.length; i++) {
+          $scope.starValue = parseInt($scope.ratingStars[i].getAttribute('data-value'));
+          if ($scope.starValue <= star) {
+            $scope.ratingStars[i].classList.add('checked');
+          } else {
+            $scope.ratingStars[i].classList.remove('checked');
+          }
+        }
+        $scope.userRating = star;
+    }
+
+    $scope.submit = function() {
+        var data = {
+            rating: $scope.userRating,
+            recommend: $scope.recommend,
+            comments: $scope.comments,
+            ticketId: $scope.ticketId
+        }
+        var postData = 'myData='+JSON.stringify(data);
+        if(data.rating == 0) {
+            $scope.errorrating = "Please enter a rating <br>";
+            return false;
+        }
+        if(data.recommend == '') {
+            $scope.errorsatisfactory = "Please answer this question <br>";
+            return false;
+        }  
+      // TODO: submit the feedback to the server
+      console.log({
+        rating: $scope.userRating,
+        recommend: $scope.recommend,
+        comments: $scope.comments,
+        ticketId: $scope.ticketId
+      });
+      serviceApi.userfeedback(postData).then(function(response){
+        $scope.updateTicketStatus = function() {
+            var data = {
+                status: 5,
+                ticketId: $scope.ticket_id
+            };
+            $http.post('getticket/updatestatus',data)
+                .then(function(response) {         
+                });
+        }
+        swal({
+            title: "Feedback Submitted!",
+            text: "Your Feedback has been submitted",
+            icon: "success",
+
+        });
+      });
+    };
+});
+app.controller('viewFeedback', function($scope,serviceApi,$stateParams,$http,$state,$rootScope,close) {
+    $scope.closeModal = function() {
+        close(); // close, but give 200ms for bootstrap to animate
+    };
+    $scope.ticketId = $stateParams.ticketId;
+    $scope.userRating = 0;
+    // $scope.recommend = '';
+    $scope.comments = '';
+
+    $scope.getTicketInfo = function() {
+        $http ({
+            method: 'GET',
+            url: 'getticket/getticketinfo/' + $scope.ticketId
+        })
+        .then(function(response) {
+            $scope.ticketInfo = response.data;
+            console.log($scope.ticketInfo);
+            $scope.userid = $scope.ticketInfo.users[0].user_id;
+            console.log($rootScope.userid);
+            console.log($rootScope.role);
+            console.log($scope.userid)
+            if($rootScope.userid != $scope.userid && $rootScope.role != 1) {
+                $state.go('Ticket',$rootScope.userid);
+            }
+            else{
+            // console.log($scope.ticketInfo);
+            $scope.fsubject = $scope.ticketInfo.ticket[0].subject;
+            $scope.selectedAdmin = $scope.ticketInfo.ticket[0].assigned_to;
+            $scope.adminName = $scope.ticketInfo.admin.find(admin => admin.user_id === $scope.selectedAdmin).name;
+            $scope.updation_time= $scope.ticketInfo.ticket[0].updation_time;
+            $scope.submitted = $scope.ticketInfo.feedback[0].update_time;
+            $scope.userRating = $scope.ticketInfo.feedback[0].rating;
+            $scope.rating($scope.userRating);
+            $scope.recommend = $scope.ticketInfo.feedback[0].satisfaction;
+            $scope.comments = $scope.ticketInfo.feedback[0].comments;
+            }
+        });
+    }
+    $scope.getTicketInfo();
+
+    $scope.rating = function(star) {
+        $scope.star = star;
+        $scope.ratingStars = document.querySelectorAll('.rating-star');
+        for (var i = 0; i < $scope.ratingStars.length; i++) {
+          $scope.starValue = parseInt($scope.ratingStars[i].getAttribute('data-value'));
+          if ($scope.starValue <= star) {
+            $scope.ratingStars[i].classList.add('checked');
+          } else {
+            $scope.ratingStars[i].classList.remove('checked');
+          }
+        }
+        $scope.userRating = star;
+    }
+});
+app.controller('editFeedback', function($scope, $http, $stateParams,$state,$rootScope,serviceApi,ticketInfo,$state) {
+    if($rootScope.session!='0')
+    {
+        $scope.it='-1';
+        $scope.keyword = null;
+        // console.log('logged in');
+        // console.log($rootScope.role);
+        if($rootScope.role!="0"){
+            $rootScope.admin=true;
+        }
+        else{
+            $rootScope.admin=false;
+        }
+    }    
+    if($rootScope.admin) {
+        swal({
+            title: "Error",
+            text: "admin can't edit feedback",
+            icon: "error"
+        })
+        $state.go('Ticket',$rootScope.user_id);
+    }
+        $scope.ticketId = $stateParams.ticketId;
+        $scope.ticketInfo = ticketInfo;
+        if($scope.ticketInfo.feedback.length ==  0) {
+            swal({
+                title: "No Feedback Found!",
+                text: "No feedback found for this ticket or Your Ticket is not resolved",
+                icon: "warning",
+            });
+            $state.go('Ticket',$rootScope.userid);
+        }
+        $scope.userid = $scope.ticketInfo.users[0].user_id;
+        if( $rootScope.userid != $scope.userid ) {
+             $state.go('Ticket',$rootScope.userid);
+        }
+        else {
+            $scope.fsubject = $scope.ticketInfo.ticket[0].subject;
+            $scope.selectedAdmin = $scope.ticketInfo.ticket[0].assigned_to;
+            $scope.adminName = $scope.ticketInfo.admin.find(admin => admin.user_id === $scope.selectedAdmin).name;
+            $scope.updation_time= $scope.ticketInfo.ticket[0].updation_time;
+            $scope.submitted = $scope.ticketInfo.feedback[0].update_time;
+            $scope.userRating = $scope.ticketInfo.feedback[0].rating;
+            $scope.recommend = $scope.ticketInfo.feedback[0].satisfaction;
+            $scope.comments = $scope.ticketInfo.feedback[0].comments;
+        }
+
+        //  Rating
+        $scope.rating = function(star) {
+            $scope.star = star;
+            $scope.ratingStars = document.querySelectorAll('.rating-star');
+            for (var i = 0; i < $scope.ratingStars.length; i++) {
+              $scope.starValue = parseInt($scope.ratingStars[i].getAttribute('data-value'));
+              if ($scope.starValue <= star) {
+                $scope.ratingStars[i].classList.add('checked');
+              } else {
+                $scope.ratingStars[i].classList.remove('checked');
+              }
+            }
+            $scope.userRating = star;
+        }
+        $scope.rating($scope.userRating);
+    
+        $scope.submit = function() {
+            var data = {
+                rating: $scope.userRating,
+                recommend: $scope.recommend,
+                comments: $scope.comments,
+                ticketId: $scope.ticketId
+            }
+            var postData = 'myData='+JSON.stringify(data);
+            if(data.rating == 0) {
+                $scope.errorrating = "Please enter a rating <br>";
+                return false;
+            }
+            if(data.recommend == '' || data.recommend == undefined) {
+                $scope.errorsatisfactory = "Please answer this question <br>";
+                return false;
+            }  
+          console.log({
+            rating: $scope.userRating,
+            recommend: $scope.recommend,
+            comments: $scope.comments,
+            ticketId: $scope.ticketId
+          });
+          serviceApi.editfeedback(postData).then(function(response){
+            swal({
+                title: "Feedback Submitted!",
+                text: "Your Feedback has been submitted",
+                icon: "success",
+    
+            });
+            $state.go('viewTicket', { ticketId: $scope.ticketId });
+          });
+        };
 });

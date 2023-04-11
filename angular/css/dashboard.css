@@ -31,11 +31,11 @@
     width: 234px;
     min-height: 0px;
     height: 124px;
-    margin: 2px 56px 5px 5px;
+    margin: 2px 15px 5px 5px;
 }
 #card p{
     font: normal normal 600 14px/24px Open Sans;
-    font-size: 19px;
+    /* font-size: 19px; */
     margin: 0px;
 }
 .graph{
@@ -43,14 +43,15 @@
 }
 .inner-graph{
     display: flex;
-    margin: 60px 359px 4px 88px;
-    width: 29rem;
+    margin: 60px 40px 4px 88px;
+    width: 35rem;
     flex-direction: column;
 }
 .inner-fro{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    width: 50%;
 }
 .inner-fro p{
     font-weight: 700;
@@ -74,5 +75,50 @@
     margin-left:10px;
 }
 #graph-card{
-    width:145%;
+    width:100%;
+}
+.mdl-card__title {
+    padding: 10px 16px;
+}
+@media only screen and (max-width: 480px) {
+    .dashboard-header{
+        margin: 8px;
+    }
+    .card-container{
+        margin: 10px 2px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+    .mdl-card__title {
+        padding: 10px;
+    }
+    #card{
+        width: 42%;
+        height: 100px;
+        margin: 2px 18px 15px 5px;
+    }
+    #card p{
+        font: normal normal 600 13px Open Sans;
+    }
+    .graph{
+        display: flex;
+        flex-direction: column;
+    }
+    .inner-fro{
+        width: 150px;
+        justify-content: space-between;
+    }
+    .inner-graph{
+        margin: 15px;
+        width: 90%;
+    }
+    .day_filter_innner{
+        font-size: 16px;
+    }
+    /* .dashboard-header {
+        justify-content: center;
+        align-items: center;
+        margin: 8px 20px;
+    } */
 }

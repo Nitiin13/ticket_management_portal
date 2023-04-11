@@ -1,6 +1,6 @@
 <div class="mdl-grid">
   <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone mdl-col--8-col-tablet" >
-
+    <!-- {{goToEdit ? 'yes' : 'no'}} -->
   <div class="section_1_container">
       
       <div class="id_section">  
@@ -8,7 +8,7 @@
           <span class="id_name">{{loggedname}}</span>
          
       
-      <div class="Action_section">
+      <div class="Action_section">       
           <div class="large_screen_only">
           <button class="mdl-button mdl-js-button mdl-button--raised" id="btn_ticket" ng-click="navigate()" ng-if="!admin">
               <i class="material-icons">add</i>
@@ -40,12 +40,12 @@
         <i class="material-icons">add</i>
         Add new ticket
       </button>
-      <a ui-sref="dashboard">
-      <button class="mdl-button mdl-js-button mdl-button--raised" id="btn_ticket_download">
-        <i class="material-icons">download</i>
-        Download Table
-      </button>
-    </a>
+      <a  ng-click="export()" id="btn_ticket_download">
+          <i class="material-icons">download</i>
+      </a>
+      <a ui-sref="dashboard" id="btn_ticket_dashboard" ng-if="admin">
+          <i class="material-icons">build</i>
+      </a>
     </div>
   </div>
   <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone" >
@@ -113,22 +113,23 @@
     <div class="ticket_actions" ng-if="delupdate">
       <td class="count_info"><span class="ticket_count">{{chklength}} selected</span></td>
       <div class="extra_actions">
+        <a ui-sref="editTicket({ ticketId: goToEdit })">
         <div ng-if="!Sglchk"class="update_section">
           
           <button id="lang-switcher" class="mdl-button mdl-js-button mdl-button--icon">
-            <i id="update_icon" class="material-icons">update</i> 
-            
+            <i id="update_icon" class="material-icons">update</i>
           </button> 
-        <span class="update_text">Update</span></div>
+        <span class="update_text">Update</span></div></a>
         <div ng-if="Sglchk" class="update_section_disabled"><i id="update_icon" class="material-icons">update</i>  
-          <span class="update_text">Update</span></div>
-        <div class="delete_section">
+          <span class="update_text">Update</span>
+        </div>
+        <div class="delete_section" ng-click="deleteTickets()">
           <button id="lang-switcher" class="mdl-button mdl-js-button mdl-button--icon">
             <i id="delete_icon" class="material-icons">delete</i>  
-            
           </button> 
-      
-        <span class="delete_text">Delete</span></div>
+          <span class="delete_text">Delete</span>
+        </div>
+
       </div>
       </div>
     <div class="ttable">
@@ -153,32 +154,74 @@
       <tbody>
       
         <tr ng-if="tickets" ng-repeat="i in tickets track by $index">
-          
+
           <td><label {% comment %}class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"{% endcomment %} for="{{i.ticket_id}}">
-            <input type="checkbox" id="{{i.ticket_id}}" ng-checked="checkbox" ng-model="i.checkbox"  {% comment %}class="mdl-checkbox__input"{% endcomment %} value="{{i.ticket_id}}" ng-change="getChecked(i.checkbox,i.ticket_id)" ></td>
-          <td>{{ i.ticket_id }}</td>
+              <input type="checkbox" id="{{i.ticket_id}}" ng-checked="checkbox" ng-model="i.checkbox"  {% comment %}class="mdl-checkbox__input"{% endcomment %} value="{{i.ticket_id}}" ng-change="getChecked(i.checkbox,i.ticket_id)" >
+              </label>
+          </td>
+          <td>
+            <a ui-sref="viewTicket({ ticketId: i.ticket_id })" style="color:#212121;">
+              {{ i.ticket_id }}
+            </a>
+          </td>
           
-          <td class="something" id="{{i.ticket_id}}">{{ i.subject }}
+          <td class="something" id="{{i.ticket_id}}">
+            <a ui-sref="viewTicket({ ticketId: i.ticket_id })" style="color:#212121;">
+              {{ i.subject }}
+            </a>
             <div class="mdl-tooltip" data-mdl-for="{{i.ticket_id}}">
               <strong>{{i.subject}}</strong>
               </div>
           </td>
-          <td ng-if="admin">{{i.admin_name}}</td>
-          <td ng-if="!admin">{{i.name}}</td>
-          <td ng-if="!admin" >{{items[i.status].name}}</td>
+
           <td ng-if="admin">
-            <select  class="mdl-textfield__input" ng-model="i.status" ng-change="statusChanged(i.status,i.ticket_id)">
+            <a ui-sref="viewTicket({ ticketId: i.ticket_id })" style="color:#212121;">
+              {{i.admin_name}}
+            </a>
+          </td>
+
+          <td ng-if="!admin">
+            <a ui-sref="viewTicket({ ticketId: i.ticket_id })" style="color:#212121;">
+              {{i.name}}
+            </a>
+          </td>
+          
+          <td ng-if="!admin" >
+            <a ui-sref="viewTicket({ ticketId: i.ticket_id })" style="color:#212121;">
+              {{items[i.status].name}}
+            </a>
+          </td>
+          <td ng-if="admin">
+            <select  class="mdl-textfield__input" ng-model="i.status" 
+              ng-change="statusChanged(i.status,i.ticket_id,i.user_name,i.subject,i.admin_name,i.user_email)">
               <!-- ng-options="item as item.name for item in items" -->
 
-              <option ng-repeat='item in items track by $index' value="{{item.id}}">{{item.name}}</option>
+              <option ng-repeat='item in items track by $index' value="{{item.id}}">
+                <a ui-sref="viewTicket({ ticketId: i.ticket_id })" style="color:#212121;">{{item.name}}
+                </a>
+              </option>
             </select>
             
           </td>
           
-          <td ng-if="admin">{{i.user_name}}</td>
+          <td ng-if="admin">            
+            <a ui-sref="viewTicket({ ticketId: i.ticket_id })" style="color:#212121;">
+              {{i.user_name}}
+            </a>
+          </td>
       
-          <td>{{i.updation_time}}</td>
-          <td>{{ i.tag }}</td>
+          <td>
+            <a ui-sref="viewTicket({ ticketId: i.ticket_id })" style="color:#212121;">
+              {{i.updation_time}}
+            </a>
+          </td>
+          
+          <td>
+            <a ui-sref="viewTicket({ ticketId: i.ticket_id })" style="color:#212121;">
+              {{ i.tag }}
+            </a>
+          </td>
+          
          <td ng-if="!tickets">no tickets</td>
         </tr>
         

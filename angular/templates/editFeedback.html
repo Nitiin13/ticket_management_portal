@@ -1,0 +1,45 @@
+<div class="edit_feedback_form">
+
+  <h3>Edit Feedback</h3>
+  <p>Your ticket related to <b>{{fsubject}}</b> has been resolved and closed by the assignee 
+  <b>{{adminName}} </b> on <b>{{updation_time}}</b>. If you need any further assistance then please reply to us.</p>
+
+  <form>
+    <div class="rating">
+        <p> 1. Rate the overall quality of the help desk service*</p>
+        <span style="color: red;" ng-bind-html="errorrating"></span>
+        <span style="font-size:24px" data-value="1" class="fa fa-star rating-star" ng-click="rating(1)"></span>
+        <span style="font-size:24px" data-value="2"  class="fa fa-star rating-star" ng-click="rating(2)"></span>
+        <span style="font-size:24px" data-value="3" class="fa fa-star rating-star" ng-click="rating(3)"></span>
+        <span style="font-size:24px" data-value="4" class="fa fa-star rating-star" ng-click="rating(4)"></span>
+        <span style="font-size:24px" data-value="5" class="fa fa-star rating-star" ng-click="rating(5)"></span>
+    </div>
+
+    <div class="satisfaction">
+      <p>2. Did the help desk representative provide a satisfactory resolution?*</p>
+      <span style="color: red;" ng-bind-html="errorsatisfactory"></span>
+      <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="yes">
+        <input type="radio"  name="satisfactory" id="yes" class="mdl-radio__button" ng-model="recommend" value="yes">
+        <span class="mdl-radio__label">Yes</span>
+      </label>
+      <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="no">
+        <input type="radio"  name="satisfactory" id="no" class="mdl-radio__button" ng-model="recommend"  value="no">
+        <span class="mdl-radio__label">No</span>
+      </label>      
+      </div>
+
+      <div class="feedback_comment">
+        <p>3. Would you like to add a comment? <span style="color: #9b9b9b;">(optional)</span></p>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="comment" ng-model="comments">
+          <label class="mdl-textfield__label" for="comment">Comment</label>
+        </div>
+      </div>
+
+      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect closeRequestButton" 
+                ng-click="submit()">Submit & Edit Feedback
+      </button>
+  
+    </form>
+
+</div>

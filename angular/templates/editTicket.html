@@ -28,14 +28,14 @@
                         <span class="mdl-textfield__error" ng-if="reqerror">Subject is Mandatory</span>
                       </div>
                       <!-- Assigned To -->
-                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" ng-show="admin">
                         <select class="mdl-textfield__input" name="admin" ng-model="selectedAdmin" style="width:50%">
                           <option ng-repeat="admin in ticketInfo.admin" value="{{admin.user_id}}">{{admin.name}}</option>
                         </select>
                         <label class="mdl-textfield__label">Assigned to</label>
                       </div>
                       <!-- Internal Department -->
-                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" ng-show="admin">
                         <select class="mdl-textfield__input" name="department" ng-model="selectedDepartment" style="width:50%">
                           <option ng-repeat="department in ticketInfo.department" value="{{department.department_id}}">{{department.department_name}}</option>
                         </select>
@@ -51,14 +51,14 @@
                     
                     <div style="width: 100%;margin: 18px 0;">
                       <!-- Status -->
-                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:49%">
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:49%" ng-show="admin">
                         <select class="mdl-textfield__input" name="status" ng-model="selectedStatus"  style="width:80%">
                           <option ng-repeat="status in statusOption" value="{{status.id}}">{{status.name}}</option>
                         </select>
                         <label class="mdl-textfield__label">Status</label>
                       </div>
                       <!-- Assistant Process -->
-                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  style="width:49%">
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  style="width:49%" ng-show="admin">
                         <select class="mdl-textfield__input" name="Assistant" ng-model="selectedProcess"  style="width:80%">
                           <option ng-repeat="process in assistantProcess" value="{{process.id}}">{{process.name}}</option>
                         </select>
@@ -70,12 +70,12 @@
                     </div>
                     <div style="width: 100%;">
                     <!-- Due Date -->
-                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:49%">
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:49%" ng-show="admin">
                         <input class="mdl-textfield__input" type="text" id="datepicker" style="width:80%" ng-model="selectedDate" readonly>
                         <label class="mdl-textfield__label" for="datepicker">Due Date</label>
                       </div>
                     <!-- Priority -->
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  style="width:49%">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"  style="width:49%" ng-show="admin">
                       <select class="mdl-textfield__input" name="Assistant" ng-model="selectedPriority" style="width:80%">
                         <option ng-repeat="priority in priorityOption" value="{{priority.id}}">{{priority.name}}</option>
                       </select>

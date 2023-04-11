@@ -24,13 +24,15 @@ class User_model extends CI_Model
      
       if($userid!=false)
       {
-         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,users.name');
+         $this->db->where('is_deleted', 0);
+         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,users.name,users.email');
          $this->db->from('tickets');
          $this->db->join('users', 'users.user_id=tickets.assigned_to');
          $this->db->where('tickets.user_id', $userid);
       }
       else{
-         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,a.name as user_name,b.name as admin_name');
+         $this->db->where('is_deleted', 0);
+         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,a.name as user_name,b.name as admin_name,a.email as user_email');
          $this->db->from('tickets');
          $this->db->join('users as a', 'a.user_id = tickets.user_id');
          $this->db->join('users as b', 'tickets.assigned_to=b.user_id');
@@ -405,7 +407,8 @@ class User_model extends CI_Model
    public function getTickets($userId,$limit,$stream)
    {
       if ($userId == false) {
-         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,a.name as user_name,b.name as admin_name');
+         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,a.name as user_name,a.email as user_email,b.name as admin_name');
+         $this->db->where('is_deleted', 0);
          $this->db->from('tickets');
          $this->db->join('users as a', 'a.user_id = tickets.user_id');
          $this->db->join('users as b', 'tickets.assigned_to=b.user_id');
@@ -428,7 +431,8 @@ class User_model extends CI_Model
             return false;
          }
       } else {
-         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,users.name');
+         $this->db->select('tickets.ticket_id,tickets.subject,tickets.status,tickets.updation_time,tickets.genration_time,users.name,users.email');
+         $this->db->where('is_deleted', 0);
          $this->db->from('tickets');
          $this->db->join('users', 'users.user_id=tickets.assigned_to');
          $this->db->where('tickets.user_id', $userId);

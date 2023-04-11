@@ -21,8 +21,7 @@ window.mini_user_email="<?php echo $mini_user_email;?>";
  <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 
 
- 
- <script src="angular/js/service.js"></script>       
+<script src="angular/js/service.js"></script>       
 <script src="angular/js/script.js"></script> 
 <!-- <script src="angular/library/angular-modal-service.js"></script>  -->
 <script src="angular/node_modules/angular-modal-service/dst/angular-modal-service.min.js"></script>
@@ -41,16 +40,21 @@ window.mini_user_email="<?php echo $mini_user_email;?>";
 <link rel="stylesheet" href="angular/css/dashboard.css">
 <link rel="stylesheet" href="angular/css/newticket.css">
 <link rel="stylesheet" href="angular/css/viewticket.css">
+<link rel="stylesheet" href="angular/css/feedback.css">
 <script src="angular/ckeditor/ckeditor.js"></script>
 <script src="angular/ckeditor/styles.js"></script>
 <link rel="stylesheet" href="angular/css/filter_modal.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/regular.min.css" integrity="sha512-WidMaWaNmZqjk3gDE6KBFCoDpBz9stTsTZZTeocfq/eDNkLfpakEd7qR0bPejvy/x0iT0dvzIq4IirnBtVer5A==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
         <!--        DATE PICKER         -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <!--         SWEET ALERT         -->
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/sweetalert/dist/sweetalert.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert/dist/sweetalert.min.js"></script>
+        <!--        NG-SANITIZE      -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-sanitize.js"></script>
 <!-- <link rel="stylesheet" href="angular/css/login-page.css">
  <link rel="stylesheet" href="angular/css/nav.css">
  <link rel="stylesheet" href="angular/css/register.css">
@@ -64,7 +68,7 @@ window.mini_user_email="<?php echo $mini_user_email;?>";
             <header class="mdl-layout__header mdl-layout--large-screen-only">
                 <div class="mdl-layout__header-row">
                 <!-- Title -->
-                <span class="mdl-layout-title">NAV</span>
+                <span class="mdl-layout-title">{{loggedname}}</span>
                 <!-- Add spacer, to align navigation to the right -->
                 <div class="mdl-layout-spacer"></div>
                 <!-- Navigation. We hide it in small screens. -->

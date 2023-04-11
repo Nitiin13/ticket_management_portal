@@ -18,6 +18,7 @@ class Editticket_model extends CI_Model
         $this->db->select('tags.tag_name');
         $this->db->from('ticket_tags');
         $this->db->join('tags', 'ticket_tags.tagid = tags.tagid');
+        $this->db->where('is_deleted', 0);
         $this->db->where('ticket_tags.ticket_id', $ticketId);
         $query = $this->db->get();
         return $query->result_array();
@@ -96,6 +97,67 @@ class Editticket_model extends CI_Model
         } else {
           return false;
         }
+    }
+    
+    public function userfeedback($ticketId, $rating, $recommend, $comments) {
+      $data = array(
+        'ticket_id' => $ticketId,
+        'rating' => $rating,
+        'satisfaction' => $recommend,
+        'comments' => $comments
+    );
+    $this->db->insert('feedback', $data);
+    }
+    
+    public function editfeedback($ticketId, $rating, $recommend, $comments) {
+      $data = array(
+        'ticket_id' => $ticketId,
+        'rating' => $rating,
+        'satisfaction' => $recommend,
+        'comments' => $comments
+      );
+      $this->db->where('ticket_id', $ticketId);
+      $this->db->update('feedback', $data);
+    }
+
+    public function deleteTicket($ticketId) {
+      // Delete ticket
+      $this->db->set('is_deleted', 1);
+      $this->db->where('ticket_id', $ticketId);
+      $this->db->update('tickets');
+      // Delete attachments
+      $this->db->set('is_deleted', 1);
+      $this->db->where('type', 0);
+      $this->db->where('ref_id', $ticketId);
+      $this->db->update('attachment');
+      // Delete Tags
+      $this->db->set('is_deleted', 1);
+      $this->db->where('ticket_id', $ticketId);
+      $this->db->update('ticket_tags');
+    }
+
+    public function deleteTickets($tickets) {
+      foreach ($tickets as $ticketId) {
+        // Delete ticket
+        $this->db->set('is_deleted', 1);
+        $this->db->where('ticket_id', $ticketId);
+        $this->db->update('tickets');
+        // Delete attachments
+        $this->db->set('is_deleted', 1);
+        $this->db->where('type', 0);
+        $this->db->where('ref_id', $ticketId);
+        $this->db->update('attachment');
+        // Delete Tags
+        $this->db->set('is_deleted', 1);
+        $this->db->where('ticket_id', $ticketId);
+        $this->db->update('ticket_tags');
       }
-      
+    }
+
+    public function get_average_rating() {
+        $this->db->select('ROUND(AVG(rating), 2) AS average_rating', FALSE); // upto 2 digits after decimal
+        // $this->db->select_avg('rating');
+        $query = $this->db->get('feedback');
+        return $query->row()->average_rating; 
+    }    
 }   

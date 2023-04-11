@@ -66,6 +66,10 @@ background-color:#EBF1FE;
     align-content:center;
     align-items: center;
     color:var(--primary);
+    cursor: pointer;
+}
+.delete_text {
+    cursor: pointer;
 }
 #person_icon{
     width: 16px;
@@ -270,28 +274,51 @@ line-height: 22px;
     display: none;
   }
   .section_1_container{
-    margin:49px auto auto auto;
+    margin:25px 20px;
   }
   #logout{
-    margin-left: 105px;
-    
-    
+    margin-left: 50px;    
   }
-  
+  #btn_ticket_download{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--unnamed-color-9b9b9b);
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #9B9B9B;
+    border-radius: 50%;
+    padding: 5px;
+    width: 25px;
+    height: 25px;
+    color: #9B9B9B;
+}
+#btn_ticket_dashboard{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--unnamed-color-9b9b9b);
+    background: #71d28e 0% 0% no-repeat padding-box;
+    border: 1px solid #71d28e;
+    border-radius: 50%;
+    padding: 5px;
+    width: 25px;
+    height: 25px;
+    color: #FFFFFF;
+}
   .small_screen_only{
     display: flex;
     width: 100%;
     margin:20px auto auto auto;
   }
-  #btn_ticket_download{
+  /* #btn_ticket_download{
     margin-left: 7px;
-  }
+  } */
   #btn_ticket{
     margin-left: 0px;
   }
   .filters_section{
     flex-direction: column;
-    margin:56px auto auto auto;
+    margin: 15px;
     align-items: flex-start;
   }
   .filters_actions{

@@ -6,36 +6,44 @@
           <a href="ticket" class="mdl-navigation__link back_button" style="color: #212121;padding: 0;"><i class="material-icons back_button">arrow_back_ios</i>Back</a>
           <span class="sidemenu_text view_ticket_heading">Ticket Properties</span>
           <span class="sidemenu_contact">CONTACT INFO</span>
-          <span class="view_ticket_heading">Almashines Technologies Clients</span>
-          <span class="sidemenu_email">clients@almashines.com</span>
+          <span class="view_ticket_heading">{{ticketInfo.users[0].name}}</span>
+          <span class="sidemenu_email">{{ticketInfo.users[0].email}}</span>
           <div class="sidemenu_ticketInfo">
             <!-- Status -->
-            <div class="view_ticketInfo_sidemenu">
+            <!-- ng-show="admin" -->
+            <div class="view_ticketInfo_sidemenu" ng-show="admin">
               <p class="view_ticket_heading">Status</p>
               <select class="mdl-textfield__input view_ticket_dropdown" name="status" ng-model="selectedStatus" ng-change="updateTicketStatus()">
                 <option ng-repeat="status in statusOption" value="{{status.id}}">{{status.name}}</option>
               </select>
             </div>       
             <!-- Due date -->
-            <div class="view_ticketInfo_sidemenu">
+            <div class="view_ticketInfo_sidemenu" ng-show="admin">
               <p class="view_ticket_heading">Due date</p>
-              <input class="mdl-textfield__input" type="text" id="datepicker" ng-model="selectedDate" ng-change="updateduedate()">
+              <!-- <span ng-if="selectedDate == null" class="sidemenu_email">
+                
+              </span> -->
+              <div class="date-calender-div">
+                <input class="mdl-textfield__input date-calender" type="text" id="datepicker" ng-model="selectedDate" ng-change="updateduedate()">
+                <i class="material-icons">event</i>
+              </div>
             </div>
             <!-- Priority -->
-            <div class="view_ticketInfo_sidemenu">
+            <div class="view_ticketInfo_sidemenu" ng-show="admin">
               <p class="view_ticket_heading">Priority</p>
               <select class="mdl-textfield__input view_ticket_dropdown" name="Assistant" ng-model="selectedPriority" ng-change="updatepriority()">
                 <option ng-repeat="priority in priorityOption" value="{{priority.id}}">{{priority.name}}</option>
               </select>
             </div>
             <!-- Assigned To -->
-            <div class="view_ticketInfo_sidemenu">
+            <div class="view_ticketInfo_sidemenu" ng-show="admin">
               <p class="view_ticket_heading">Assigned To</p>
                 <p class="side_menu_content">{{adminName}}</p>
             </div>
             <!--      TAGS      -->
             <div class="view_ticketInfo_sidemenu">
               <p class="view_ticket_heading">Tags</p>
+              <span class="sidemenu_email" ng-if="tagNames.length == 0">No Tags Selected</span>
               <div class="mdl-chip  mdl-chip--deletable" ng-repeat="tagName in tagNames">
                 <span class="mdl-chip__text">{{tagName}}</span>
               </div>
@@ -47,8 +55,6 @@
 <!--      TICKET INFORMATION      -->
 <main class="mdl-layout__content">
   <div class="mdl-grid demo-content  view_ticket_main">
-    <!-- <div class="mdl-grid"> -->
-      <!-- <div class="mdl-cell mdl-cell--2-col"></div> -->
       <div class="mdl-cell mdl-cell--12-col mdl-title view_ticket_header">
         <div class="view_ticket_subject">
           <p class="mdl-title-text ticket_subject" style="display: inline-block; vertical-align: middle;">{{ticketInfo.ticket[0].subject}}</p><br>
@@ -64,18 +70,49 @@
             <i class="material-icons">more_horiz</i>
           </button>
           <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="menu">
-            <li class="mdl-menu__item"><a ui-sref="editTicket">Edit Ticket</a></li>
-            <li class="mdl-menu__item">Delete Ticket</li>
+            <li class="mdl-menu__item"><a ui-sref="editTicket({ ticketId: ticket_id })">Edit Ticket</a></li>
+            <li class="mdl-menu__item" ng-click="showDeleteDialog()">Delete Ticket</li>
           </ul>
         </div>
         </div>
-        <!-- </div> -->
       </div>
-      <!--        FEEDBACK       --><!--  ng-if="feedback" -->
+      <!--        FEEDBACK       -->
       <div class="view_ticket_feedback" ng-if="feedback">
         <p>User has submitted feedback</p>
-        <a class="mdl-button mdl-js-button feedback_button">View Feedback</a>
+        <a id="view_feedback_link" ng-click="openModal()" class="mdl-button mdl-js-button feedback_button">View Feedback</a>
       </div>
+                
+      <!--      BUTTON FOR MOBILE VIEW    -->
+      <div class="view_ticket_button-for-mobile">
+        <div class="reply_button-for-mobile">
+          <a class="mdl-button mdl-js-button reply_button_content"><i class="material-icons reply_button_content">reply</i>Reply</a>
+        </div>
+        <div class="mdl-layout__drawer-button-custom">
+          <button ng-click="toggleDrawer()" class="ticketproperties">ticket properties</button>
+          <div class="mdl-layout__obfuscator"></div>
+        </div>
+        <div class="menu_icon">
+        <button id="menu-mobile" class="mdl-button mdl-js-button mdl-button--icon edit_delete_ticket-for-mobile">
+          <i class="material-icons">more_horiz</i>
+        </button>
+        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="menu-mobile">
+          <li class="mdl-menu__item"><a ui-sref="editTicket({ ticketId: ticket_id })">Edit Ticket</a></li>
+          <li class="mdl-menu__item" ng-click="showDeleteDialog()">Delete Ticket</li>
+        </ul>
+        </div>
+      </div>
+      <!--    DELETE DIALOG BOX     -->
+      <dialog class="mdl-dialog mdl-dialog--top">
+        <h4 class="mdl-dialog__title">Delete ticket?</h4>
+        <div class="mdl-dialog__content">
+          <p>Are you sure want to delete this ticket? All the past conversations in this ticket will be removed permanently from this platform. This action cannot be reverted.</p>
+        </div>
+        <div class="mdl-dialog__actions">
+          <button class="mdl-button mdl-js-button mdl-button--raised Cancel-button" ng-click="hideDeleteDialog()">Cancel</button>
+          <button class="mdl-button mdl-js-button mdl-button--raised confirm-button" ng-click="deleteItem()">Confirm</button>
+        </div>
+      </dialog> 
+      
       <!--        ATTACHMENTS        -->
       <div class="view_ticket_attachments">
         <table ng-if="files" class="table">
@@ -92,11 +129,13 @@
           </tbody>
         </table>
       </div>
+      <!--         Description         -->
       <div class="view_ticket_description">
-        <p ng-model="ticketInfo.ticket[0].description">{{ticketInfo.ticket[0].description}}</p>
+        <p ng-bind-html="description | to_trusted"></p>
       </div>
+      <!--          Reply           -->
       <div class="view_reply"  ng-if="!reply">
-        <p class="view_ticket_heading">No past conversations available</p>
+        <p class="view_ticket_heading" >No past conversations available</p>
       </div>
       <!-- <div class="view_reply" ng-if="reply">REPLY BODY HERE</div> -->
     <!-- </div> -->

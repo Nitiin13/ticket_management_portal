@@ -1,25 +1,28 @@
-
-.view_ticket_sidemenu {
-    overflow: hidden;
+.mdl-layout__drawer{
+    /* width: 280px; */
+    background-color: #FFFFFF;
 }
-a {
+.demo-drawer {
+    padding: 10px 16px;
+}
+.view_ticketInfo_sidemenu {
+    margin: 28px 0;
+}
+.mdl-menu__item a {
     color: #212121;
 }
 .ticket_id {
     margin-right: 48px;
 }
-.demo-drawer {
-    padding: 0 20px;
-    /* text-align: left; */
-}
 .view_ticket_heading {
     color: #212121;
-    font: normal 600 16px Open Sans;
+    font: normal 600 15px Open Sans;
     margin: 10px 0;
 }
 .sidemenu_email {
     color: #9b9b9b;
     font-size: 14px;
+    overflow-wrap: break-word;
 }
 .view_ticket_dropdown {
     border: 1px solid #0000001F;
@@ -29,12 +32,18 @@ a {
     font-size: 14px;
 }
 .sidemenu_contact {
-    font: normal 16px Open Sans;
+    font: normal 14px Open Sans;
     color: #212121;
 }
 .side_menu_content {
     color: #212121;
-    font-size: 14px;    
+    font-size: 12px;    
+}
+.date-calender-div {
+    display: flex;
+}
+.date-calender {
+    width: 90%;
 }
 .view_ticket_main {
     margin: 30px;
@@ -46,9 +55,10 @@ a {
     /* align-items: center; */
 }
 .ticket_subject {
-    width: 400px;
+    width: 600px;
+    overflow-wrap: break-word;
     color: #000000BC;
-    font: normal 600 20px Open Sans;
+    font: normal 600 18px Open Sans;
 }
 .view_ticket_button {
     width: 180px;
@@ -62,11 +72,33 @@ a {
     background: #4275F4;
     border-radius: 3px;
 }
+.view_ticket_button-for-mobile {
+    display: none;
+}
+.reply_button-for-mobile {
+    display: none;
+}
 .reply_button_content {
     color: #ffffff;
 }
 .edit_delete_ticket {
     border: 1px solid #9B9B9B;
+}
+.edit_delete_ticket-for-mobile {
+    display: none;
+}
+.mdl-dialog {
+    width: 500px;
+    background: #FFFFFF;
+    box-shadow: 0px 3px 6px #00000029;
+}
+.confirm-button {
+    background: #4275F4;
+    border-radius: 3px;
+}
+.cancel-button {
+    border: 1px solid #9B9B9B;
+    border-radius: 3px;
 }
 .view_ticket_feedback {
     width: 100%;
@@ -95,18 +127,103 @@ a {
     margin: 8px;
 }
 td {
-    /* width: 261px; */
-    /* justify-content: space-between; */
     padding: 10px;
 }
 .view_ticket_description {
     background: #8EA2D41F;
     border: 1px solid #70707036;
-    width: 100%;
-    /* height: 395px; */
+    width: 1000px;
+    overflow-wrap: break-word;
     padding: 20px;
+    margin: 10px 0;
 }
 .view_ticket_description p {
     color: #212121;
     font: normal 14px Open Sans;
+    /* width: 90%; */
 }
+
+  
+  /* For phone */
+  @media only screen and (max-width: 480px) {
+    
+    .ticket_subject {
+        font-size: 20px;
+    }
+    .view_ticket_feedback {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: flex-start;
+        height: 130px;
+        margin: 12px 0;
+    }
+    .view_ticket_feedback p {
+        font-size: 16px;
+    }
+    .feedback_button {
+        font-size: 14px;
+    }
+    .view_ticket_attachments {
+        margin: 0;
+    }
+    .mdl-dialog {
+        width: 300px;
+    }
+    td {
+        padding: 8px 0;
+        font-size: 14px;
+    }
+    .ticket_subject {
+        width: 300px;
+        font: normal 600 16px Open Sans;
+    }
+    .reply_button {
+        display: none;
+    }
+    .reply_button-for-mobile {
+        display: block;
+        height: 35px;
+        background: #4275F4;
+        border-radius: 3px;  
+        padding: 0; 
+    }
+    .view_ticket_button {
+        display: none;
+    }
+    .view_ticket_button-for-mobile {
+        display: flex;
+        flex-direction: row;
+    }
+    .edit_delete_ticket {
+        display: none;
+    }
+    .edit_delete_ticket-for-mobile {
+        display: block;
+        border: 1px solid #9B9B9B;
+    }
+    .mdl-layout__drawer-button {
+        display: none;
+    }
+    .ticketproperties {
+        background: #71D28E;
+        border-radius: 3px;
+        height: 35px;
+        width: 157px;
+        border: none;
+        color: #FFFFFF;
+        font: normal 14px Open Sans;
+    }
+    .view_ticket_button-for-mobile {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        margin: 10px 0;
+    }
+    .view_ticket_description {
+        background: #8EA2D41F;
+        border: 1px solid #70707036;
+        width: 400px;
+    }
+  }  

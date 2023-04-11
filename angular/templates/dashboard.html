@@ -3,7 +3,9 @@
     <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone mdl-col--8-col-tablet" >
       
         <div class="section_1_container dashboard-header">
-        <h3>OverView</h3>
+        <div>
+            <h3>OverView</h3>
+        </div>
         <div class="day_filter_outer">  
             <span class="day_filter_innner">All Ticket<span>(3)</span>
                 <button id="lang-switcher" class="mdl-button mdl-js-button mdl-button--icon">
@@ -18,18 +20,18 @@
         <div class="card-container">
           <div class="demo-card-rectangle mdl-card mdl-shadow--2dp" id="card" ng-click="statusopenorclose(0)">
                 <div class="mdl-card__title mdl-card--expand">
-                  <p >Open</p>
+                  <p >Opened</p>
                  </div>
                 <div class="mdl-card__title mdl-card--expand">
-                    <p> {{dashboard_data.open}}</p>
+                    <p style="font-size: 16px;"> {{dashboard_data.open}}</p>
                 </div>
             </div>
             <div class="demo-card-rectangle mdl-card mdl-shadow--2dp" id="card" ng-click="statusopenorclose(1)">
                 <div class="mdl-card__title mdl-card--expand">
-                    <p >Close</p>
+                    <p >Closed</p>
                 </div>
                 <div class="mdl-card__title mdl-card--expand">
-                    <p> {{dashboard_data.close}}</p>
+                    <p style="font-size: 18px;"> {{dashboard_data.close}}</p>
                 </div>
             </div>
             <div class="demo-card-rectangle mdl-card mdl-shadow--2dp" id="card" ng-click="due(0)">
@@ -37,7 +39,7 @@
                     <p >Due Today</p>
                 </div>
                 <div class="mdl-card__title mdl-card--expand">
-                    <p> {{dashboard_data.duetoday}}</p>
+                    <p style="color:#CC4400;font-size: 18px;"> {{dashboard_data.duetoday}}</p>
                 </div>
             </div>
             <div class="demo-card-rectangle mdl-card mdl-shadow--2dp" id="card" ng-click="due(1)">
@@ -45,7 +47,7 @@
                     <p >OverDue</p>
                 </div>
                 <div class="mdl-card__title mdl-card--expand">
-                    <p> {{dashboard_data.due}}</p>
+                    <p style="font-size: 18px;"> {{dashboard_data.due}}</p>
                 </div>
             </div>
             <div class="demo-card-rectangle mdl-card mdl-shadow--2dp" id="card" ng-click="unassigned(0)">
@@ -53,7 +55,7 @@
                     <p>Unassigned</p0>
                 </div>
                 <div class="mdl-card__title mdl-card--expand">
-                    <p> {{dashboard_data.assigned}}</p>
+                    <p style="font-size: 18px;"> {{dashboard_data.assigned}}</p>
                 </div>
             </div>
             <div class="demo-card-rectangle mdl-card mdl-shadow--2dp" id="card">
@@ -61,7 +63,7 @@
                     <p>Average Customer Rating</p>
                 </div>
                 <div class="mdl-card__title mdl-card--expand">
-                <p> 4.5</p>
+                <p style="color: #4275F4;font-size: 18px;"> {{averageRating.rating}}</p>
                 </div>
             </div>
         </div>
@@ -82,7 +84,7 @@
              </div>       
              <div class="demo-card-rectangle mdl-card mdl-shadow--2dp" id="graph-card">
                     <div class="mdl-card__title mdl-card--expand">
-                       <zingchart id = "new_ticket" zc-json = "newTicket" zc-height = 500 zc-width = 600 ></zingchart>
+                       <zingchart id = "new_ticket" zc-json = "newTicket" zc-height = 350 zc-width = 450 ></zingchart>
                     </div>
             </div>
         </div>
@@ -104,7 +106,7 @@
         </div>         
         <div class="demo-card-rectangle mdl-card mdl-shadow--2dp" id="graph-card">
             <div class="mdl-card__title mdl-card--expand">
-                <zingchart id = "cloed" zc-json = "closed" zc-height = 500 zc-width = 600 ></zingchart>
+                <zingchart id = "cloed" zc-json = "closed" zc-height = 350 zc-width = 450 ></zingchart>
             </div>
         </div>
     </div>

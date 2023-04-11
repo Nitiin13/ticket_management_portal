@@ -23,6 +23,51 @@ serviceModule.factory('serviceApi',function($http,$rootScope){
         return request;
 
     }
+    serviceApi.feedback=function(data){
+        var request =$http({
+                method: 'POST',
+                url : 'getticket/send_feedback',
+                headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+                data: data
+            });
+        return request;
+    }
+    serviceApi.userfeedback=function(data){
+        var request =$http({
+                method: 'POST',
+                url : 'getticket/get_feedback',
+                headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+                data: data
+            });
+        return request;
+    }
+    serviceApi.editfeedback=function(data){
+        var request =$http({
+                method: 'POST',
+                url : 'getticket/edit_feedback',
+                headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+                data: data
+            });
+        return request;
+    }
+    serviceApi.deleteticket=function(data){
+        var request =$http({
+                method: 'POST',
+                url : 'getticket/delete_ticket',
+                headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+                data: data
+            });
+        return request;
+    }
+    serviceApi.deletetickets=function(data){
+        var request =$http({
+                method: 'POST',
+                url : 'getticket/delete_tickets',
+                headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+                data: data
+            });
+        return request;
+    }
     serviceApi.resetpassword=function(data){
         var request =$http({
                 method: 'POST',
